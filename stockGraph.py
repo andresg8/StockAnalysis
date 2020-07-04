@@ -109,8 +109,8 @@ class StockGraph(Widget):
 		self.ybot = float((min(avgValues)-minv)*r) + minh
 		self.yavg = float(((sum(avgValues)/len(avgValues))-minv)*r) + minh
 		self.ytop = float((max(avgValues)-minv)*r) + minh
-		print(self.ybot, minh)
-		print(self.ytop, maxh)
+		#print(self.ybot, minh)
+		#print(self.ytop, maxh)
 		points = []
 		for y in range(len(avgValues)):
 			currentx = self.xinit + (y * wint)
@@ -152,6 +152,7 @@ class StockGraph(Widget):
 
 
 	def drawGraph(self, points, xinit, ybot, yavg, ytop):
+		fs = 14
 		with self.canvas:
 			Color(*self.color)
 			self.glowLine = Line(points = points, width = 1.1, cap = 'round', joint = 'round')
@@ -159,20 +160,20 @@ class StockGraph(Widget):
 			self.line = Line(points = points, width = .8, cap = 'round', joint = 'round')
 			#minLine
 			self.minLabel = Label(text = "${:.2f}".format(min(self.avgValues)), 
-				color = self.color,font_size = 10, size = (xinit, "10sp"), 
-				pos = (0, ybot-5), font_name = "res/Aldrich", font_hinting = "light", bold = True)
+				color = self.color,font_size = fs, size = (xinit, str(fs)+"sp"), 
+				pos = (0, ybot-fs/2), font_name = "res/Aldrich", font_hinting = "light", bold = True)
 			Color(192/255, 192/255, 192/255)
 			self.minLine = Line(points = [xinit, ybot, self.width, ybot])
 			#avgLine
 			self.avgLabel = Label(text = "${:.2f}".format(sum(self.avgValues)/len(self.avgValues)), 
-				color = self.color, font_size = 10, size = (xinit, "10sp"), 
-				pos = (0, yavg-5), font_name = "res/Aldrich", font_hinting = "light", bold = True)
+				color = self.color, font_size = fs, size = (xinit, str(fs)+"sp"), 
+				pos = (0, yavg-fs/2), font_name = "res/Aldrich", font_hinting = "light", bold = True)
 			Color(192/255, 192/255, 192/255)
 			self.avgLine = Line(points = [xinit, yavg, self.width, yavg])
 			#maxLine
 			self.maxLabel = Label(text = "${:.2f}".format(max(self.avgValues)), 
-				color = self.color, font_size = 10, size = (xinit, "10sp"), 
-				pos = (0, ytop-5), font_name = "res/Aldrich", font_hinting = "light", bold = True)
+				color = self.color, font_size = fs, size = (xinit, str(fs)+"sp"), 
+				pos = (0, ytop-fs/2), font_name = "res/Aldrich", font_hinting = "light", bold = True)
 			Color(192/255, 192/255, 192/255)
 			self.maxLine = Line(points = [xinit, ytop, self.width, ytop])
 

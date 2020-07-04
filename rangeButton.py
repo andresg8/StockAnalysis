@@ -32,7 +32,7 @@ class RangeButton(Button):
 
 	def updateGraphRanges(self, itself):
 		for button in self.alpha.rangeButtons:
-			print(button, button.active)
+			#(button, button.active)
 			if button != self:
 				button.active = False
 				button.draw()
@@ -46,9 +46,9 @@ class RangeButton(Button):
 	def updateColor(self):
 		if self.highlights:
 			self.canvas.remove(self.highlights)
-			wp = self.width * .25
-			hp = self.height * .25
-			args = (self.x+wp, self.y+hp*1.05, self.width-wp*2, self.height-hp*2, 15, 100)
+			wp = self.width * .225
+			hp = self.height * .225
+			args = (self.x+wp, self.y+hp*1.05, self.width-wp*2, self.height-hp*2, 12, 100)
 			with self.canvas:
 				Color(*self.alpha.color)
 				self.highlights = Line(rounded_rectangle=args, width = 1.2)
@@ -71,7 +71,7 @@ class RangeButton(Button):
 		if not self.highlights:
 			wp = self.width * .25
 			hp = self.height * .25
-			args = (self.x+wp, self.y+hp*1.05, self.width-wp*2, self.height-hp*2, 15, 100)
+			args = (self.x+wp, self.y+hp*1.05, self.width-wp*2, self.height-hp*2, 12, 100)
 			# pos = (self.x+wp, self.y+hp*1.1)
 			# size = (self.width-wp*2, self.height-hp*2)
 			with self.canvas:
