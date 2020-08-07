@@ -32,7 +32,6 @@ class RangeButton(Button):
 
 	def updateGraphRanges(self, itself):
 		for button in self.alpha.rangeButtons:
-			#(button, button.active)
 			if button != self:
 				button.active = False
 				button.draw()
@@ -72,9 +71,6 @@ class RangeButton(Button):
 			wp = self.width * .25
 			hp = self.height * .25
 			args = (self.x+wp, self.y+hp*1.05, self.width-wp*2, self.height-hp*2, 12, 100)
-			# pos = (self.x+wp, self.y+hp*1.1)
-			# size = (self.width-wp*2, self.height-hp*2)
 			with self.canvas:
 				Color(*self.alpha.color)
 				self.highlights = Line(rounded_rectangle=args, width = 1.2)
-				#self.highlights = Rectangle(pos = pos, size = size)

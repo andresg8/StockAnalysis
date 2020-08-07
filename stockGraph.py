@@ -12,14 +12,17 @@ from kivy.graphics import *
 import yfinance as yf
 import numpy as np
 import datetime	
+from errors import BadTickerException
+
 
 BOT = datetime.datetime(1980, 1, 1)
 EOT = datetime.datetime(2036, 1, 1)
 class StockGraph(Widget):
-	def __init__(self, ticker, alpha):
+	def __init__(self, ticker, alpha, dynamic = True):
 		super().__init__()
 		self.abbr = ticker
 		self.ticker = yf.Ticker(ticker)
+		self.dynamic = dynamic
 		self.currentPrice = self.ticker.history("1d", "1m")["Low"].values[-1]
 		self.currentTime = self.ticker.history("1d", "1m")["Low"].index[-1]
 		self.rangeStart = "YTD"
@@ -29,7 +32,7 @@ class StockGraph(Widget):
 		self.display = alpha.tickerDisplay
 		self.display.text = self.timeParse(self.currentTime) + "${:.2f}".format(self.currentPrice)
 		self.touchLine = None
-		self.color = (0/255, 255/255, 0/255, 1)
+		self.color = (255/255, 255/255, 255/255, 1)
 		self.graphValores()
 
 	def timeParse(self, dt):
@@ -56,11 +59,15 @@ class StockGraph(Widget):
 		self.abbr = ticker
 		try:
 			self.currentPrice = self.ticker.history(self.rangeStart, self.interval)["Low"].values[-1]
+			self.currentTime = self.ticker.history("1d", "1m")["Low"].index[-1]
+			oneYearDaily = self.ticker.history("1Y", "1d")
+			if len(oneYearDaily) < 14:
+				raise Exception()
 		except:
 			self.ticker = catchTicker
 			self.abbr = catchAbbr
-			raise LookupError("Invalid Abbreviation")
-		self.currentTime = self.ticker.history("1d", "1m")["Low"].index[-1]
+			e = BadTickerException(ticker)
+			raise e
 		self.display.text = self.timeParse(self.currentTime) + "${:.2f}".format(self.currentPrice)
 		self.graphValores()
 		self.updateLine()
@@ -87,8 +94,9 @@ class StockGraph(Widget):
 		dates, avgValues = self.getRangeIntData(self.rangeStart, self.rangeEnd, self.interval)
 		self.dates = dates
 		self.avgValues = avgValues
-		if avgValues[-1] >= avgValues[0]: self.color = (0/255, 255/255, 0/255, 1)
-		else: self.color = (255/255, 0/255, 0/255, 1)
+		if self.dynamic:
+			if avgValues[-1] >= avgValues[0]: self.color = (0/255, 255/255, 0/255, 1)
+			else: self.color = (255/255, 0/255, 0/255, 1)
 		self.alpha.updateColors()
 		#print(dates)
 		h = self.height
@@ -109,8 +117,6 @@ class StockGraph(Widget):
 		self.ybot = float((min(avgValues)-minv)*r) + minh
 		self.yavg = float(((sum(avgValues)/len(avgValues))-minv)*r) + minh
 		self.ytop = float((max(avgValues)-minv)*r) + minh
-		#print(self.ybot, minh)
-		#print(self.ytop, maxh)
 		points = []
 		for y in range(len(avgValues)):
 			currentx = self.xinit + (y * wint)

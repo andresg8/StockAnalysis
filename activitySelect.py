@@ -24,15 +24,23 @@ class ActivitySelect(BoxLayout):
 			size_hint = (1, None), height = Window.height*.1)
 		self.spacing = (self.width * .2)/3
 		self.alpha = alpha
-		self.buttons = []
+		self.buttons = dict()
 		srcs = ["search", "money", "chart", "rank"]
+		acts = ["search", "track", "stats", "rank"]
 		funcs = [self.toSearchActivity, self.toTrackActivity,
 				self.toCompareActivity, self.toRankActivity]
 		for i in range(len(srcs)):
 			b = IconButton(self, funcs[i], srcs[i])
-			self.buttons.append(b)
+			self.buttons[acts[i]] = b
 			self.add_widget(b)
-		self.updateSelected(self.buttons[0])
+		self.updateSelected(self.buttons["search"])
+
+	def artificialClick(self, activity):
+		button = self.buttons[activity]
+		if activity == "search": self.toSearchActivity(button)
+		elif activity == "track": self.toTrackActivity(button)
+		elif activity == "stats": self.toCompareActivity(button)
+		elif activity == "rank": self.toRankActivity(button)
 
 	def toSearchActivity(self, itself):
 		self.updateSelected(itself)
@@ -49,7 +57,7 @@ class ActivitySelect(BoxLayout):
 	def toCompareActivity(self, itself):
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
-		self.alpha.activity = self.alpha.activities["compare"]
+		self.alpha.activity = self.alpha.activities["stats"]
 		self.alpha.scrollView.add_widget(self.alpha.activity)
 
 	def toRankActivity(self, itself):
@@ -60,7 +68,7 @@ class ActivitySelect(BoxLayout):
 
 
 	def updateSelected(self, itself):
-		for button in self.buttons:
+		for button in self.buttons.values():
 			if button != itself:
 				button.colorUnselected()
 		itself.colorSelected()

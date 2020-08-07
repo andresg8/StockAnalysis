@@ -12,32 +12,29 @@ from kivy.graphics import *
 from rangeButton import RangeButton
 from stockGraph import StockGraph
 from searchActivity import SearchActivity
-from compareActivity import CompareActivity
+from rankActivity import RankActivity
 from activitySelect import ActivitySelect
+from statsActivity import StatsActivity
+from trackActivity import TrackActivity
+from searchTree import SearchTree
 import yfinance as yf
 import numpy as np
 import datetime	
+import pickle
 import time
 		
 
 class StockAnalysis(App):
 	def build(self):
-		self.activities = {"search": SearchActivity(), 
-		"track": SearchActivity(), 
-		"compare": SearchActivity(), 
-		"rank":CompareActivity()}
+		searchables = pickle.load(open("res/searchables.p", 'rb'))
+		self.crossRefs = pickle.load(open("res/crossMark6.p", 'rb'))
+		self.searchRecs = SearchTree(searchables)
+		self.searchDB = (self.crossRefs, self.searchRecs)
+		self.activities = {"search": SearchActivity(self, self.searchDB),
+		"track": TrackActivity(self, self.searchDB),
+		"stats": StatsActivity(self, self.searchDB),
+		"rank": RankActivity(self)}
 		self.root = GridLayout(cols = 1)
-		#######################################
-		################ Title ################
-		#######################################
-		# self.titleLabel = Label(text = " StockAnalysis", color = (180/255, 180/255, 180/255, 1),#(75/255,225/255,0/255,1),
-		# 	font_name = "res/Aldrich", font_hinting = "light", bold = True, halign = "left",
-		# 	font_size = 36)
-		# #self.coloredWidgets.append(self.titleLabel)
-		# def titleScale(*args):
-		# 	self.titleLabel.text_size = self.titleLabel.size
-		# self.titleLabel.bind(size = titleScale)
-		# self.root.add_widget(self.titleLabel)
 		self.activity = self.activities["search"]
 		#######################################
 		############# Scroll View #############
@@ -57,7 +54,6 @@ class StockAnalysis(App):
 			self.activitySelect.y = 0
 		self.activitySelect.bind(size = activitySelectScale)
 		self.root.add_widget(self.activitySelect)
-		# self.root.add_widget(self.searchLayout)
 		return self.root
 
 	

@@ -3,7 +3,6 @@ from kivy.clock import Clock
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -11,7 +10,8 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.graphics import *
-from stockGraph import StockGraph
+from statLayout import StatLayout
+from statsGraph import StatsGraph
 from rangeButton import RangeButton
 from searchTree import SearchTree
 from stockInfo import StockInfo
@@ -21,35 +21,36 @@ import yfinance as yf
 import numpy as np
 import datetime	
 import pickle
-import time
 
 
-class SearchActivity(GridLayout):
+class StatsActivity(GridLayout):
 	def __init__(self, app, searchDB):
 		super().__init__(cols = 1, size_hint_y = None)
+		#######################################
+		############ Housekeeping #############
+		#######################################
 		self.app = app
 		self.searchDB = searchDB
 		self.abbr = "GE"
 		self.stockGraph = None
 		self.coloredWidgets = []
-		self.color = (0/255, 255/255, 0/255, 1)
-		#######################################
-		########### Activity Layout ###########
-		#######################################
-		#self.graphDataLayout = GridLayout(cols = 1, size_hint_y = None)
+		self.color = (255/255, 255/255, 255/255, 1)
 		self.bind(minimum_height=self.setter('height'))
+		#[red, orange, yellow, green, blue, purple]
+		self.colorPallete = [(255/255, 0/255, 0/255, 1), (255/255, 165/255, 0/255, 1),
+			(255/255, 255/255, 0/255, 1), (0/255, 255/255, 0/255, 1), 
+			(0/255, 0/255, 255/255, 1), (255/255, 0/255, 255/255, 1)]
 		#######################################
 		############ Search Layout ############
 		#######################################
 		self.searchLayout = BoxLayout(orientation='horizontal')
-		#hint_text = "Company...", background_color = (0, 0, 0, 0),
-		#	foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1),
-		#	multiline = False
 		self.searchText = SearchBar(self, self.searchDB)
-		self.searchText.bind(on_text_validate = self.updateGraph)
+		self.searchText.width = Window.width * .8
+		self.searchText.bind(on_text_validate = self.updateLoader)
 		self.searchLayout.add_widget(self.searchText)
 		self.searchButton = Button(text = "Cancel",
 				font_name = "res/Aldrich", font_hinting = "light", bold = True)
+		self.searchButton.width = Window.width *.2
 		self.searchButton.bind(on_press = self.removeText)
 		self.searchLayout.add_widget(self.searchButton)
 		self.add_widget(self.searchLayout)
@@ -74,19 +75,20 @@ class SearchActivity(GridLayout):
 			font_name = "res/Aldrich", font_hinting = "light", bold = True)
 		self.coloredWidgets.append(self.tickerDisplay)
 		self.tickerLayout.add_widget(self.tickerDisplay)
-		# self.dataLayout.add_widget(self.searchLayout)
 		self.dataLayout.add_widget(self.tickerLayout)
 		#######################################
 		############# Stock Graph #############
 		#######################################
-		self.stockGraph = StockGraph(self.abbr, self)
+		self.stockGraph = StatsGraph(self.abbr, self, False)
 		self.dataLayout.add_widget(self.stockGraph)
+		# for i in range(len(self.stockGraph.AIKB)):
+		# 	button = 
 		#######################################
 		############ Range Options ############
 		#######################################
 		self.rangeLayout = BoxLayout(orientation='horizontal')
-		ranges = [("1D","1d","5m"), ("1W","1wk","15m"), ("1M","1mo","60m"),
-					("YTD","YTD","1h"), ("1Y","1y","1d"), ("5Y","5y","1wk")]
+		ranges = [("1W","1wk","1d"), ("2W","2wk","1d"), ("1M","1mo","1d"), ("3M","3mo","1d"),
+					("YTD","YTD","1d"), ("1Y","1y","1d"), ("2Y","2y","1d")]
 		self.rangeButtons = []
 		for r in ranges:
 			rangeButton = RangeButton(r[0], self, r[1], r[2])
@@ -96,35 +98,42 @@ class SearchActivity(GridLayout):
 		self.dataLayout.add_widget(self.rangeLayout)
 		self.updateColors()
 		self.updateInfo(self.abbr)
-		self.info = StockInfo(self.stockGraph.ticker)
-		self.dataLayout.add_widget(self.info)
+		self.statGrid = GridLayout(cols = 2, size_hint_y = None, height = Window.height * .4)
+		self.statLayouts = []
+		for k, v in self.stockGraph.stats.items():
+			rng = False
+			default = 0
+			if k in ["Bollinger Bands", "Exponential Moving Average", "Simple Moving Average",
+						"Relative Strength Index", "Average True Range"]:
+				rng = True
+				default = 10
+			statLayout = StatLayout(k, v[1], self, v[0], rng, default)
+			self.statGrid.add_widget(statLayout)
+			self.statLayouts.append(statLayout)
+		self.dataLayout.add_widget(self.statGrid)	
+		self.add_widget(self.dataLayout)
 		#######################################
 		############# Ratio Setup #############
 		#######################################
 		self.searchLayout.size_hint_y = None
 		self.searchLayout.height = Window.height * .1
 
-		self.add_widget(self.dataLayout)
-		self.info.size_hint_y = None
 		self.tickerLayout.size_hint_y = None
 		self.tickerLayout.height = Window.height * .1
 		self.stockGraph.size_hint_y = None
-		self.stockGraph.height = Window.height * .8
+		self.stockGraph.height = Window.height * .5
 		self.rangeLayout.size_hint_y = None
 		self.rangeLayout.height = Window.height * .1
 		self.dataLayout.size_hint_y = None
-		self.info.continuousHeight()
-		self.dataLayout.height = (self.info.height + 
-		 	self.tickerLayout.height + self.stockGraph.height + self.rangeLayout.height)
-		self.bind(size = self.scale)
-		Clock.schedule_once(self.continuousHeight, 0)
+		self.dataLayout.height = (self.tickerLayout.height + self.stockGraph.height + self.rangeLayout.height + Window.height * .4)
+		# self.bind(size = self.scale)
 
 	def scale(self, *args):
 		Clock.schedule_once(self.continuousHeight, 0)
 
 	def continuousHeight(self, *args):
-		self.dataLayout.height = (self.info.height + self.tickerLayout.height + 
-			self.stockGraph.height + self.rangeLayout.height)
+		self.dataLayout.height = (self.tickerLayout.height + 
+			self.stockGraph.height + self.rangeLayout.height + Window.height * .4)
 
 	def removeText(self, *args):
 		if not self.searchText.text: 
@@ -141,30 +150,27 @@ class SearchActivity(GridLayout):
 		for button in self.rangeButtons:
 			button.updateColor()
 
-	def updateGraph(self, *args):
+	def updateLoader(self, *args):
 		if not self.searchText.text: 
 			return
 		self.ticker = self.searchText.text.upper()
 		self.searchText.text = ""
 		self.loading = LoadingPopup()
 		self.loading.open()
-		Clock.schedule_once(self.update)
-		
+		Clock.schedule_once(self.updateGraph)
 
-	def update(self, *args):
+	def updateGraph(self, *args):
 		try:
+			for stat in self.statLayouts:
+				stat.statButton.active = False
+				stat.statButton.draw()
 			self.stockGraph.updateTicker(self.ticker)
-			self.info.updateTicker(self.stockGraph.ticker)
 			self.tickerTitle.text = self.ticker
 			self.updateInfo(self.ticker)
-			self.info.scale()
-			self.scale()
 		except BadTickerException as e:
 			errmsg = str(e.ticker) + " does not exist or has been delisted!"
 			self.errorPopup = ErrorPopup(errmsg)
 			self.errorPopup.open()
-		# except IndexError as e:
-			
 		self.loading.dismiss()
 
 	def updateInfo(self, newTicker):
@@ -180,10 +186,14 @@ class SearchActivity(GridLayout):
 	def artificialUpdateGraph(self, ticker):
 		if not ticker: 
 			return
-		self.ticker = ticker
-		self.loading = LoadingPopup()
-		self.loading.open()
-		Clock.schedule_once(self.update)
+		newTicker = ticker
+		try:
+			self.stockGraph.updateTicker(newTicker)
+			self.tickerTitle.text = newTicker
+			self.updateInfo(newTicker)
+		except:
+			print("Unga Bunga, error occured")
+			return
 
 
 	def swap(self, new = None):
@@ -195,7 +205,7 @@ class SearchActivity(GridLayout):
 
 
 class SearchBar(TextInput):
-	def __init__(self, alpha, searchDB = None):
+	def __init__(self, alpha, searchDB):
 		super().__init__(hint_text = "Company...", background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1),
 			multiline = False)
@@ -250,9 +260,7 @@ class SearchBar(TextInput):
 				b.abbr = abbr
 				def useRec(itself):
 					self.text = itself.abbr
-					self.alpha.updateGraph()
+					self.alpha.updateLoader()
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)
 			self.alpha.swap(self.searchRecLayout)
-
-

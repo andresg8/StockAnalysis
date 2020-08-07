@@ -32,10 +32,6 @@ class SearchTree():
 		self.items = sorted(l, key = lambda x: x.upper())
 		self.root = Node("", False)
 		alpha = []
-		# for c in range(65, 91):
-		# 	alpha.append(str(chr(c)))
-		# for a in alpha:
-		# 	self.addItem(a)
 		for item in self.items:
 			self.addItem(item)
 
@@ -89,15 +85,3 @@ class SearchTree():
 			else:
 				current = None
 		return related
-
-
-		# for item in items:
-		# 	if len(item) == 1:
-		# 		newNode = Node(item)
-		# 		self.root.addChild(newNode)
-		# for child in self.root:
-		# 	for item in self.items:
-		# 		c = child.content
-		# 		if len(item) == len(c)+1 and item.startswith(c):
-		# 			newNode = node(item)
-		# 			child.addChild(newNode)
