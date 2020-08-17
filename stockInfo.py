@@ -1,28 +1,13 @@
-from kivy.app import App 
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.graphics import *
-from stockGraph import StockGraph
-from rangeButton import RangeButton
-from searchTree import SearchTree
-import yfinance as yf
-import numpy as np
-import datetime	
-import pickle
-import time
 
 
 class StockInfo(GridLayout):
 	def __init__(self, ticker):
-		super().__init__(cols = 1, size_hint_y = None)
+		super().__init__(cols = 1, size_hint_y = None, padding = [Window.width * .05, 0])
 		self.ticker = ticker
 		self.nameLabel = Label(text = "", font_name = "res/Aldrich", font_size = 24,
 			font_hinting = "light", bold = True, halign = "left", valign = "center")
@@ -59,11 +44,11 @@ class StockInfo(GridLayout):
 		Clock.schedule_once(self.continuousHeight, 0)
 
 	def continuousHeight(self, *args):
-		self.nameLabel.text_size[0] = Window.width
-		self.addressLabel.text_size[0] = Window.width
-		self.phoneLabel.text_size[0] = Window.width
-		self.websiteLabel.text_size[0] = Window.width
-		self.detailLabel.text_size[0] = Window.width
+		self.nameLabel.text_size[0] = Window.width * .9
+		self.addressLabel.text_size[0] = Window.width * .9
+		self.phoneLabel.text_size[0] = Window.width * .9
+		self.websiteLabel.text_size[0] = Window.width * .9
+		self.detailLabel.text_size[0] = Window.width * .9
 		self.detailLabel.height = self.detailLabel.texture_size[1]
 		self.height = (self.nameLabel.height + self.addressLabel.height + 
 			self.phoneLabel.height + self.websiteLabel.height + self.detailLabel.height)
@@ -74,7 +59,8 @@ class StockInfo(GridLayout):
 
 
 	def getInfo(self):
-		info = self.ticker.info
+		try: info = self.ticker.info
+		except: info = dict()
 		name = ""
 		a1 = ""
 		a2 = ""
@@ -86,9 +72,10 @@ class StockInfo(GridLayout):
 		details = ""
 		country = ""
 		try:name = info["longName"] + " "
-		except:pass
+		except:pass 
 		try:a1 = info["address1"] + " "
-		except:pass
+		except:
+			a1 = "Sorry! There was a problem downloading this information, check back soon..."
 		try:a2 = info["address2"] + " "
 		except:pass
 		try:city = info["city"] + ", "
@@ -109,7 +96,7 @@ class StockInfo(GridLayout):
 		self.addressLabel.text = "Address: " + a1 + a2 + "\n              " + city + state + z + "\n              " + country
 		self.phoneLabel.text = "Phone: " + phone
 		self.websiteLabel.text = "Website: " + website
-		self.detailLabel.text = "Details: " + details
+		self.detailLabel.text = "Details: " + details.replace("&#39;", "'")
 		# self.detailLabel.height = self.detailLabel.texture_size[1]
 		# self.height = (self.nameLabel.height + self.addressLabel.height + 
 		# 	self.phoneLabel.height + self.websiteLabel.height + self.detailLabel.height)

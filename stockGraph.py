@@ -1,18 +1,11 @@
-from kivy.app import App 
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
+from errors import BadTickerException
 from kivy.graphics import *
 import yfinance as yf
 import numpy as np
 import datetime	
-from errors import BadTickerException
 
 
 BOT = datetime.datetime(1980, 1, 1)
@@ -104,7 +97,7 @@ class StockGraph(Widget):
 		self.originalh = h
 		self.originalw = w
 		hint = h / len(avgValues)
-		wint = w * .9 / len(dates)
+		wint = w * .85 / (len(dates) - 1)
 		minh = .05 * h
 		maxh = .95 * h
 		l = maxh - minh
@@ -190,7 +183,7 @@ class StockGraph(Widget):
 		touchPrice = self.avgValues[-1]
 		touchDate = self.currentTime
 		hint = self.points[2] - self.points[0]
-		if touch.x > self.points[-2]: touchLinex = self.points[-2]
+		if touch.x >= self.points[-2]: touchLinex = self.points[-2]
 		else:
 			for i in range(2, len(self.points), 2):
 				if touch.x < self.points[i]:

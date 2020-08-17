@@ -1,28 +1,11 @@
 from kivy.app import App 
-from kivy.uix.widget import Widget
-from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
-from rangeButton import RangeButton
-from stockGraph import StockGraph
 from searchActivity import SearchActivity
-from rankActivity import RankActivity
 from activitySelect import ActivitySelect
-from statsActivity import StatsActivity
-from trackActivity import TrackActivity
 from searchTree import SearchTree
-import yfinance as yf
-import numpy as np
-import datetime	
 import pickle
-import time
-		
 
 class StockAnalysis(App):
 	def build(self):
@@ -30,10 +13,8 @@ class StockAnalysis(App):
 		self.crossRefs = pickle.load(open("res/crossMark6.p", 'rb'))
 		self.searchRecs = SearchTree(searchables)
 		self.searchDB = (self.crossRefs, self.searchRecs)
-		self.activities = {"search": SearchActivity(self, self.searchDB),
-		"track": TrackActivity(self, self.searchDB),
-		"stats": StatsActivity(self, self.searchDB),
-		"rank": RankActivity(self)}
+		self.activities = {"search": SearchActivity(self, self.searchDB)}
+		
 		self.root = GridLayout(cols = 1)
 		self.activity = self.activities["search"]
 		#######################################

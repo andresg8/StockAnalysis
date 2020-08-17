@@ -1,40 +1,24 @@
-from kivy.app import App 
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.popup import Popup
-from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
-from stockGraph import StockGraph
-from rangeButton import RangeButton
-from searchTree import SearchTree
-from stockInfo import StockInfo
-import yfinance as yf
-import numpy as np
-import datetime	
-import pickle
-import time
 
 
 class ErrorPopup(Popup):
 	def __init__(self, errmsg = "An Unexpected Error Has Occured..."):
 		super().__init__(size_hint_y = None, size_hint_x = None,
-			width = Window.width * .5, height = Window.width * .5,
+			width = Window.width * .6, height = Window.width * .6,
 			title = "")
 		self.contentLayout = GridLayout(cols = 1)
 		self.errorLabel = Label(text = "Sorry!\n" + errmsg,
 			font_name = "res/Aldrich", font_hinting = "light", bold = True,
 			halign = "center", valign = "center", width = self.width)
-		self.errorLabel.text_size[0] = self.errorLabel.width
+		self.errorLabel.text_size[0] = self.errorLabel.width * .9
 		self.contentLayout.add_widget(self.errorLabel)
 		self.seppukuLayout = GridLayout(rows = 1)
-		self.spacer = Label(text = "", size_hint_x = None, width = self.width*.24)
+		self.spacer = Label(text = "", size_hint_x = None, width = self.width*.2)
 		self.seppukuLayout.add_widget(self.spacer)
 		self.seppukuButton = Button(text = "Close", 
 			font_name = "res/Aldrich", font_hinting = "light", bold = True,
@@ -51,7 +35,7 @@ class ErrorPopup(Popup):
 class LoadingPopup(Popup):
 	def __init__(self):
 		super().__init__(size_hint_y = None, size_hint_x = None,
-			width = Window.width * .5, height = Window.width * .5,
+			width = Window.width * .6, height = Window.width * .6,
 			title = "", auto_dismiss = False)
 		# self.bind(minimum_height=self.setter('height'))
 		self.contentLayout = GridLayout(cols = 1)
@@ -64,14 +48,14 @@ class LoadingPopup(Popup):
 class SurePopup(Popup):
 	def __init__(self, activity, name, seppuku):
 		super().__init__(size_hint_y = None, size_hint_x = None,
-			width = Window.width * .5, height = Window.width * .5,
+			width = Window.width * .6, height = Window.width * .6,
 			title = "")
 		# self.bind(minimum_height=self.setter('height'))
 		self.activity = activity
 		self.name = name
 		self.seppuku = seppuku
 		self.contentLayout = GridLayout(cols = 1)
-		self.youSure = Label(text = "Are you sure you wish to remove " + name,
+		self.youSure = Label(text = "Are you sure you wish to remove " + name + "?",
 			font_name = "res/Aldrich", font_hinting = "light", bold = True,
 			halign = "center", valign = "center", width = self.width)
 		self.youSure.text_size[0] = self.youSure.width

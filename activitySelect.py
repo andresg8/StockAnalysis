@@ -1,34 +1,28 @@
-from kivy.app import App 
-from kivy.uix.widget import Widget
-from kivy.uix.label import Label
+from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.image import Image
-from kivy.uix.textinput import TextInput
-from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
 from rangeButton import RangeButton
 from stockGraph import StockGraph
-from searchActivity import SearchActivity
-import yfinance as yf
-import numpy as np
-import datetime	
-import time
+from popups import LoadingPopup
+from statsActivity import StatsActivity
+from trackActivity import TrackActivity
+from rankActivity import RankActivity
+from learnActivity import LearnActivity
 
 class ActivitySelect(BoxLayout):
 	def __init__(self, alpha):
 		super().__init__(orientation = "horizontal", y = 0,
 			size_hint = (1, None), height = Window.height*.1)
-		self.spacing = (self.width * .2)/3
+		self.spacing = (self.width * .2)/4
 		self.alpha = alpha
 		self.buttons = dict()
-		srcs = ["search", "money", "chart", "rank"]
-		acts = ["search", "track", "stats", "rank"]
+		srcs = ["search", "money", "chart", "rank", "learn"]
+		acts = ["search", "track", "stats", "rank", "learn"]
 		funcs = [self.toSearchActivity, self.toTrackActivity,
-				self.toCompareActivity, self.toRankActivity]
+				self.toCompareActivity, self.toRankActivity,
+				self.toLearnActivity]
 		for i in range(len(srcs)):
 			b = IconButton(self, funcs[i], srcs[i])
 			self.buttons[acts[i]] = b
@@ -42,30 +36,99 @@ class ActivitySelect(BoxLayout):
 		elif activity == "stats": self.toCompareActivity(button)
 		elif activity == "rank": self.toRankActivity(button)
 
+	def invertScroll(self, *args):
+		self.alpha.scrollView.do_scroll_y = not self.alpha.scrollView.do_scroll_y
+
 	def toSearchActivity(self, itself):
+		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
 		self.alpha.activity = self.alpha.activities["search"]
 		self.alpha.scrollView.add_widget(self.alpha.activity)
-
+		Clock.schedule_once(self.invertScroll)
+		
 	def toTrackActivity(self, itself):
+		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
+		if "track" not in self.alpha.activities:
+			self.loading = LoadingPopup()
+			self.loading.open()
+			self.invertScroll()
+			Clock.schedule_once(self.makeTrackActivity)
+		else:
+			self.alpha.activity = self.alpha.activities["track"]
+			self.alpha.scrollView.add_widget(self.alpha.activity)
+			Clock.schedule_once(self.invertScroll)
+
+	def makeTrackActivity(self, *args):
+		self.alpha.activities["track"] = TrackActivity(self.alpha, self.alpha.searchDB)
 		self.alpha.activity = self.alpha.activities["track"]
 		self.alpha.scrollView.add_widget(self.alpha.activity)
+		self.loading.dismiss()
 
 	def toCompareActivity(self, itself):
+		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
+		if "stats" not in self.alpha.activities:
+			self.loading = LoadingPopup()
+			self.loading.open()
+			self.invertScroll()
+			Clock.schedule_once(self.makeCompareActivity)
+		else:
+			self.alpha.activity = self.alpha.activities["stats"]
+			self.alpha.scrollView.add_widget(self.alpha.activity)
+			Clock.schedule_once(self.invertScroll)
+	
+	def makeCompareActivityExceptImAHomelessManThatDoesntKnowHowToCode(self, abbr):
+		self.alpha.activities["stats"] = StatsActivity(self.alpha, self.alpha.searchDB, abbr)
+
+	def makeCompareActivity(self, *args):
+		self.alpha.activities["stats"] = StatsActivity(self.alpha, self.alpha.searchDB)
 		self.alpha.activity = self.alpha.activities["stats"]
 		self.alpha.scrollView.add_widget(self.alpha.activity)
+		self.loading.dismiss()
 
 	def toRankActivity(self, itself):
+		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
-		self.alpha.activity = self.alpha.activities["rank"]
-		self.alpha.scrollView.add_widget(self.alpha.activity)		
+		if "rank" not in self.alpha.activities:
+			self.loading = LoadingPopup()
+			self.loading.open()
+			self.invertScroll()
+			Clock.schedule_once(self.makeRankActivity)
+		else:
+			self.alpha.activity = self.alpha.activities["rank"]
+			self.alpha.scrollView.add_widget(self.alpha.activity)	
+			Clock.schedule_once(self.invertScroll)	
 
+	def makeRankActivity(self, *args):
+		self.alpha.activities["rank"] = RankActivity(self.alpha)
+		self.alpha.activity = self.alpha.activities["rank"]
+		self.alpha.scrollView.add_widget(self.alpha.activity)
+		self.loading.dismiss()
+
+	def toLearnActivity(self, itself):
+		self.invertScroll()
+		self.updateSelected(itself)
+		self.alpha.scrollView.remove_widget(self.alpha.activity)
+		if "learn" not in self.alpha.activities:
+			self.loading = LoadingPopup()
+			self.loading.open()
+			self.invertScroll()
+			Clock.schedule_once(self.makeLearnActivity)
+		else:
+			self.alpha.activity = self.alpha.activities["learn"]
+			self.alpha.scrollView.add_widget(self.alpha.activity)	
+			Clock.schedule_once(self.invertScroll)	
+
+	def makeLearnActivity(self, *args):
+		self.alpha.activities["learn"] = LearnActivity(self.alpha)
+		self.alpha.activity = self.alpha.activities["learn"]
+		self.alpha.scrollView.add_widget(self.alpha.activity)
+		self.loading.dismiss()
 
 	def updateSelected(self, itself):
 		for button in self.buttons.values():

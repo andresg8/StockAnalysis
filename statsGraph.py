@@ -1,41 +1,13 @@
-from kivy.app import App 
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.graphics import *
 from collections import defaultdict
+from errors import BadTickerException
 import yfinance as yf
 import numpy as np
 import datetime	
 import math
-import pandas
-from errors import BadTickerException
-
-
-
-
-
-
-# self.AIKB = [
-# self.AIBollingersTop, bollingerBands(self, rng, m=2):
-# self.AIBollingersBot, 
-# self.AIvolatility, 
-# self.AIEMA, exponentialMovingAverage(self, rng):
-# self.AISMA, simpleMovingAverage(self, rng): 
-# self.AIRSIs, getRSI(self, rng):
-# self.AIOBV, getOnBalanceVolume(self):
-# self.AICO, getChaikinOscillator(self):
-# self.AIKO, getKlingerOscillator(self):
-# self.AIATR, getATR(self, rng = 14):
-# ]
-
-
 
 BOT = datetime.datetime(1980, 1, 1)
 EOT = datetime.datetime(2036, 1, 1)
@@ -44,19 +16,22 @@ class StatsGraph(Widget):
 		super().__init__()
 		self.abbr = ticker
 		self.ticker = yf.Ticker(ticker)
-		self.sixYearDaily = self.ticker.history("6Y", "1d")
+		self.sixYearDaily = self.ticker.history("4Y", "1d")
 		self.dynamic = dynamic
 		self.colorPallete = defaultdict(list)
 		self.stats = {"Bollinger Bands": (self.bollingerBands, (52/255, 204/255, 255/255, 1)),
 		"Exponential Moving Average": (self.exponentialMovingAverage, (0/255, 255/255, 255/255, 1)),
 		"Simple Moving Average": (self.simpleMovingAverage,  (0/255, 112/255, 255/255, 1)),
 		"Relative Strength Index": (self.getRSI, (227/255, 0/255, 34/255, 1)),
+		"Average True Range": (self.getATR,  (204/255, 85/255, 0/255, 1)),
+		"Triple EMA": (self.tripleEMA,  (255/255, 0/255, 255/255, 1)),
 		"On Balance Volume": (self.getOnBalanceVolume,  (0/255, 128/255, 0/255, 1)),
 		"Chaikin Oscillator": (self.getChaikinOscillator, (0/255, 168/255, 107/255, 1)),
-		"Klinger Oscillator": (self.getKlingerOscillator,  (141/255, 182/255, 0/255, 1)),
-		"Average True Range": (self.getATR,  (204/255, 85/255, 0/255, 1))}
+		"Klinger Oscillator": (self.getKlingerOscillator,  (141/255, 182/255, 0/255, 1))
+		}
 		self.signalLines = dict()
-
+		self.buyLines = False
+		self.sellLines = False
 		self.currentPrice = self.ticker.history("1d", "1m")["Low"].values[-1]
 		self.currentTime = self.ticker.history("1d", "1m")["Low"].index[-1]
 		self.activeStats = defaultdict(list)
@@ -67,7 +42,7 @@ class StatsGraph(Widget):
 		self.display = alpha.tickerDisplay
 		self.display.text = self.timeParse(self.currentTime) + "${:.2f}".format(self.currentPrice)
 		self.touchLine = None
-		self.color = (255/255, 255/255, 255/255, 1)
+		self.color = (1, 1, 1, 1)
 		self.graphValores()
 		self.bind(pos = self.updateLine,
 					size = self.updateLine)
@@ -117,7 +92,7 @@ class StatsGraph(Widget):
 		try:
 			self.currentPrice = self.ticker.history(self.rangeStart, self.interval)["Low"].values[-1]
 			self.currentTime = self.ticker.history("1d", "1m")["Low"].index[-1]
-			self.sixYearDaily = self.ticker.history("6Y", "1d")
+			self.sixYearDaily = self.ticker.history("4Y", "1d")
 			if len(self.sixYearDaily) < 14:
 				raise Exception()
 		except:
@@ -192,7 +167,7 @@ class StatsGraph(Widget):
 		for k, v in self.activeStats.items():
 			for stat in v:
 				self.statLines.append(stat[-match:])
-			if k in ["Bollinger Bands", "Exponential Moving Average", "Simple Moving Average"]:
+			if k in ["Bollinger Bands", "Exponential Moving Average", "Simple Moving Average", "Triple EMA"]:
 				for stat in v:
 					self.spanConsiderable.append(list(stat[-match:]))
 		if self.dynamic:
@@ -205,7 +180,7 @@ class StatsGraph(Widget):
 		self.originalh = h
 		self.originalw = w
 		hint = h / len(avgValues)
-		wint = w * .9 / (len(dates) - 1)
+		wint = w * .85 / (len(dates) - 1)
 		minh = .05 * h
 		maxh = .95 * h
 		maxValue = max(avgValues)
@@ -284,14 +259,16 @@ class StatsGraph(Widget):
 			current = np.asarray(current)
 			buyLines = np.where(current > 0)
 			sellLines = np.where(current < 0)
-			for x in buyLines[0]:
-				points = [xinit + (x * wint), maxh, xinit + (x * wint), minh]
-				allPoints.append(points)
-				self.signalColors.append((0, 1, 0, 1))
-			for x in sellLines[0]:
-				points = [xinit + (x * wint), maxh, xinit + (x * wint), minh]
-				allPoints.append(points)
-				self.signalColors.append((1, 0, 0, 1))
+			if self.buyLines:
+				for x in buyLines[0]:
+					points = [xinit + (x * wint), maxh, xinit + (x * wint), minh]
+					allPoints.append(points)
+					self.signalColors.append((0, 1, 0, 1))
+			if self.sellLines:
+				for x in sellLines[0]:
+					points = [xinit + (x * wint), maxh, xinit + (x * wint), minh]
+					allPoints.append(points)
+					self.signalColors.append((1, 0, 0, 1))
 		self.drawGraph(allPoints, self.xinit, self.ybot, self.ytop)
 		self.allPoints = allPoints
 
@@ -330,7 +307,7 @@ class StatsGraph(Widget):
 	def drawGraph(self, allPoints, xinit, ybot, ytop):
 		fs = 14
 		i = 0
-		colorPallete = [(1, 1, 1, 1)]
+		colorPallete = [self.color]
 		for pallete in self.colorPallete.values():
 			for color in pallete:
 				colorPallete.append(color)
@@ -371,7 +348,7 @@ class StatsGraph(Widget):
 		touchDate = self.currentTime
 		self.points = self.allPoints[0]
 		hint = self.points[2] - self.points[0]
-		if touch.x > self.points[-2]: touchLinex = self.points[-2]
+		if touch.x >= self.points[-2]: touchLinex = self.points[-2]
 		else:
 			for i in range(2, len(self.points), 2):
 				if touch.x < self.points[i]:
@@ -496,6 +473,7 @@ class StatsGraph(Widget):
 		volumes = volumes[clean]
 		assert(len(dates) == len(volumes))
 		N = ((closes - lows) - (highs - closes)) / (highs - lows)
+		N = np.asarray([x if np.isfinite(x) else 0 for x in N])
 		M = N * volumes
 		ADL = [0]
 		for d in range(1, len(M)):
@@ -539,6 +517,7 @@ class StatsGraph(Widget):
 		volumeForce = [0]
 		for d in range(1, len(volumes)):
 			volumeForce.append(volumes[d] * 2 * ((dm[d]/cm[d])-1) * trend[d] * 100)
+		volumeForce = np.asarray([x if np.isfinite(x) else 0 for x in volumeForce])
 		EMA34 = self.calcEMA(volumeForce, 34)
 		EMA55 = self.calcEMA(volumeForce, 55)
 		match = len(EMA34) - len(EMA55)
@@ -549,9 +528,10 @@ class StatsGraph(Widget):
 		for d in range(len(EMA34)):
 			klingerOscillator.append(EMA34[d] - EMA55[d])
 		signalLine = self.calcEMA(klingerOscillator, 13)
-		klingerOscillator = klingerOscillator[12:]
-		dates = dates[12:]
+		klingerOscillator = klingerOscillator[-len(signalLine):]
+		dates = dates[-len(signalLine):]
 		assert(len(dates) == len(klingerOscillator))
+		assert(len(klingerOscillator) == len(signalLine))
 		signals = self.classifyIntersections(klingerOscillator, signalLine)
 		return klingerOscillator, signalLine, signals
 
@@ -614,6 +594,20 @@ class StatsGraph(Widget):
 				volatility.append(2*(m * stdDev))
 				movingDates.append(dates[v])
 		return movingAverage, bbTop, bbBot
+
+	def tripleEMA(self, rng = 10):
+		dates, avgValues = self.getRangeData(self.sixYearDaily, BOT, EOT)
+		EMA1 = self.calcEMA(avgValues, rng)
+		EMA2 = self.calcEMA(EMA1, rng)
+		EMA3 = self.calcEMA(EMA2, rng)
+		EMA1 = EMA1[-len(EMA3):]
+		EMA2 = EMA2[-len(EMA3):]
+		TEMA = []
+		for i in range(len(EMA3)):
+			TEMA.append(3*EMA1[i] - 3*EMA2[i] + EMA3[i])
+		avgValues = avgValues[-len(TEMA):]
+		signals = self.classifyIntersections(avgValues, TEMA)
+		return TEMA, signals
 
 	def exponentialMovingAverage(self, rng):
 		# past = 261
@@ -688,6 +682,7 @@ class StatsGraph(Widget):
 		sellSignalLine = [70 for x in range(len(rsis))]
 		signals2 = self.classifyIntersections(rsis, sellSignalLine)
 		signals = []
+		# midLine = [50 for x in range(len(rsis))]
 		for i in range(len(signals1)):
 			if signals1[i] > 0:
 				signals.append(1)

@@ -1,37 +1,30 @@
-from kivy.app import App 
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
 from statLayout import StatLayout
 from statsGraph import StatsGraph
 from rangeButton import RangeButton
+from signalButton import SignalButton
 from searchTree import SearchTree
 from stockInfo import StockInfo
 from popups import LoadingPopup, ErrorPopup
 from errors import BadTickerException
-import yfinance as yf
-import numpy as np
-import datetime	
 import pickle
 
 
 class StatsActivity(GridLayout):
-	def __init__(self, app, searchDB):
+	def __init__(self, app, searchDB, abbr = "GE"):
 		super().__init__(cols = 1, size_hint_y = None)
 		#######################################
 		############ Housekeeping #############
 		#######################################
 		self.app = app
 		self.searchDB = searchDB
-		self.abbr = "GE"
+		self.abbr = abbr
 		self.stockGraph = None
 		self.coloredWidgets = []
 		self.color = (255/255, 255/255, 255/255, 1)
@@ -96,15 +89,27 @@ class StatsActivity(GridLayout):
 			if r[0]=="YTD":rangeButton.active = True
 			self.rangeButtons.append(rangeButton)
 		self.dataLayout.add_widget(self.rangeLayout)
+		self.signalLineGrid = GridLayout(rows = 1, size_hint_y = None, height = Window.height * .1)
+		self.signalButtons = []
+		# No Signals, Sell Signals, Buy Signals, All Signals
+		combos = [("No Signals", self, False, False), ("Sell Signals", self, False, True), 
+				("Buy Signals", self, True, False), ("Both Signals", self, True, True)]
+		for combo in combos:
+			sb = SignalButton(*combo)
+			self.signalButtons.append(sb)
+			self.signalLineGrid.add_widget(sb)
+		self.signalButtons[0].active = True
+		self.signalButtons[0].drawSelected()
+		self.dataLayout.add_widget(self.signalLineGrid)
 		self.updateColors()
 		self.updateInfo(self.abbr)
-		self.statGrid = GridLayout(cols = 2, size_hint_y = None, height = Window.height * .4)
+		self.statGrid = GridLayout(cols = 2, size_hint_y = None, height = Window.height * .5)
 		self.statLayouts = []
 		for k, v in self.stockGraph.stats.items():
 			rng = False
 			default = 0
 			if k in ["Bollinger Bands", "Exponential Moving Average", "Simple Moving Average",
-						"Relative Strength Index", "Average True Range"]:
+						"Relative Strength Index", "Average True Range", "Triple EMA"]:
 				rng = True
 				default = 10
 			statLayout = StatLayout(k, v[1], self, v[0], rng, default)
@@ -125,7 +130,7 @@ class StatsActivity(GridLayout):
 		self.rangeLayout.size_hint_y = None
 		self.rangeLayout.height = Window.height * .1
 		self.dataLayout.size_hint_y = None
-		self.dataLayout.height = (self.tickerLayout.height + self.stockGraph.height + self.rangeLayout.height + Window.height * .4)
+		self.dataLayout.height = (self.tickerLayout.height + self.stockGraph.height + self.rangeLayout.height + Window.height * .6)
 		# self.bind(size = self.scale)
 
 	def scale(self, *args):
@@ -133,13 +138,13 @@ class StatsActivity(GridLayout):
 
 	def continuousHeight(self, *args):
 		self.dataLayout.height = (self.tickerLayout.height + 
-			self.stockGraph.height + self.rangeLayout.height + Window.height * .4)
+			self.stockGraph.height + self.rangeLayout.height + Window.height * .6)
 
 	def removeText(self, *args):
-		if not self.searchText.text: 
-			return
+		# if not self.searchText.text: 
+		# 	return
 		self.searchText.text = ""
-		self.searchText.focus = False
+		self.swap()
 
 	def updateColors(self):
 		if not self.stockGraph: 
@@ -186,14 +191,10 @@ class StatsActivity(GridLayout):
 	def artificialUpdateGraph(self, ticker):
 		if not ticker: 
 			return
-		newTicker = ticker
-		try:
-			self.stockGraph.updateTicker(newTicker)
-			self.tickerTitle.text = newTicker
-			self.updateInfo(newTicker)
-		except:
-			print("Unga Bunga, error occured")
-			return
+		self.ticker = ticker
+		self.loading = LoadingPopup()
+		self.loading.open()
+		Clock.schedule_once(self.updateGraph)
 
 
 	def swap(self, new = None):
@@ -229,8 +230,8 @@ class SearchBar(TextInput):
 			if self.text:
 				self.autofill(self.text)
 			self.alpha.swap(self.searchRecLayout)
-		else:
-			self.alpha.swap()
+		# else:
+		# 	self.alpha.swap()
 
 	def autofill(self, *args):
 		if self.searchRecLayout and args[-1]:
@@ -260,6 +261,7 @@ class SearchBar(TextInput):
 				b.abbr = abbr
 				def useRec(itself):
 					self.text = itself.abbr
+					self.alpha.swap()
 					self.alpha.updateLoader()
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)

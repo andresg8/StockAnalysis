@@ -1,25 +1,18 @@
-from kivy.app import App 
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.popup import Popup
-from kivy.uix.image import Image
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
-from kivy.core.window import Window
+from kivy.uix.image import Image
 from kivy.graphics import *
+from kivy.core.window import Window
 from stockGraph import StockGraph
 from rangeButton import RangeButton
 from searchTree import SearchTree
 from stockInfo import StockInfo
 from popups import SurePopup, LoadingPopup
 import yfinance as yf
-import numpy as np
-import datetime	
 import pickle
 
 
@@ -47,7 +40,6 @@ class TrackActivity(GridLayout):
 		self.remove_widget(self.focusLayout)
 		self.focusLayout = new
 		self.add_widget(self.focusLayout)
-		#self.height = self.currentLayout.height
 
 class PortfolioWidgetsLayout(GridLayout):
 	def __init__(self, portfolios, activity):
@@ -59,7 +51,7 @@ class PortfolioWidgetsLayout(GridLayout):
 		self.updateLayout = GridLayout(rows = 1, size_hint_y = None, 
 			height = Window.height * .1)
 		self.updateSpacer = Label(text = "", size_hint_y = None, size_hint_x = None,
-			height = Window.height * .1, width = Window.width * .9)
+			height = Window.height * .1, width = Window.width * .85)
 		self.updateLayout.add_widget(self.updateSpacer)
 		self.updateButton = IconButton(self.updateLoader, "sync")
 		self.updateLayout.add_widget(self.updateButton)
@@ -72,7 +64,7 @@ class PortfolioWidgetsLayout(GridLayout):
 		self.centeringLabel = Label(text = "", size_hint_y = None, size_hint_x = None, 
 			height = Window.height * .1, width = Window.width *.45)
 		self.centeringLayout.add_widget(self.centeringLabel)
-		self.addPortfolioButton = IconButton(self.addPortfolio, "add", (0, 1, 0, .5))
+		self.addPortfolioButton = IconButton(self.addPortfolio, "add", (0, 1, 0, .6))
 		self.centeringLayout.add_widget(self.addPortfolioButton)
 		self.add_widget(self.centeringLayout)
 
@@ -115,7 +107,7 @@ class PortfolioWidget(GridLayout):
 		self.activity = activity
 		self.master = master
 		fs = 13
-		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 0, 0, .5))
+		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
 		self.abbrLabel = Label(text = portfolio.name, font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .1, size_hint_y = None,
@@ -124,28 +116,36 @@ class PortfolioWidget(GridLayout):
 		self.add_widget(self.abbrLabel)
 		self.detailLayout = GridLayout(cols = 1, height = Window.height * .1, size_hint_y = None)
 		self.valueLayout = GridLayout(rows = 1, height = Window.height * .05, size_hint_y = None)
-		self.avgCostLabel = Label(text = "Initial Cost: {0:.2f}".format(portfolio.entryFee), font_name = "res/Aldrich", font_hinting = "light",
+		self.avgCostLabel = Label(text = "Initial Cost: ${0:.2f}".format(portfolio.entryFee), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.avgCostLabel.text_size[0] = self.avgCostLabel.width
 		self.valueLayout.add_widget(self.avgCostLabel)
-		self.valueLabel = Label(text = "Current Value: {0:.2f}".format(portfolio.currentPrice), font_name = "res/Aldrich", font_hinting = "light",
+		self.valueLabel = Label(text = "Current Value: ${0:.2f}".format(portfolio.currentPrice), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.valueLabel.text_size[0] = self.valueLabel.width
 		self.valueLayout.add_widget(self.valueLabel)
 		self.detailLayout.add_widget(self.valueLayout)
 		self.profitLayout = GridLayout(rows = 1, height = Window.height * .05, size_hint_y = None)
-		self.flatLabel = Label(text = "Profit: {0:.2f}".format(portfolio.flatProfit), font_name = "res/Aldrich", font_hinting = "light",
+		self.flatLabel = Label(text = "Profit: ${0:.2f}".format(portfolio.flatProfit), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.flatLabel.text_size[0] = self.flatLabel.width
 		self.profitLayout.add_widget(self.flatLabel)
 		self.percentLabel = Label(text = "Percent Change: {0:.2f}%".format(portfolio.avgPercentChange), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.percentLabel.text_size[0] = self.percentLabel.width
 		self.profitLayout.add_widget(self.percentLabel)
 		self.detailLayout.add_widget(self.profitLayout)
 		self.add_widget(self.detailLayout)
 		with self.canvas:
-			Color(128/255, 128/255, 128/255, 1)
+			Color(100/255, 149/255, 237/255, .86)
 			self.underLine = Line(points = [self.x + .1 * self.width, self.y, self.x + .9 * self.width, self.y], 
 									width = .5, cap = 'round', joint = 'round', close = False)
 		self.bind(pos = self.manageLine, size = self.manageLine)
@@ -154,7 +154,7 @@ class PortfolioWidget(GridLayout):
 	def manageLine(self, *args):
 		self.canvas.remove(self.underLine)
 		with self.canvas:
-			Color(128/255, 128/255, 128/255, 1)
+			Color(100/255, 149/255, 237/255, .86)
 			self.underLine = Line(points = [self.x + .1 * self.width, self.y, self.x + .9 * self.width, self.y], 
 									width = .5, cap = 'round', joint = 'round', close = False)
 
@@ -184,7 +184,7 @@ class PortfolioWidget(GridLayout):
 
 	def seppuku(self):
 		self.master.portfolios.remove(self.portfolio)
-		self.master.update()
+		self.master.updateLoader()
 
 	def toEditor(self):
 		self.activity.titleLabel.text = self.portfolio.name + "'s Stocks"
@@ -202,8 +202,8 @@ class PortfolioEditorLayout(GridLayout):
 		self.titleLayout.add_widget(self.backButton)
 		self.nameEntry = TextInput(text = self.portfolio.name, background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1), multiline = False, 
-			font_size = 24, height = Window.height * .1, size_hint_y = None, width = Window.width * .8, 
-			size_hint_x = None)
+			font_size = 24, height = Window.height * .1, size_hint_y = None, width = Window.width * .75, 
+			size_hint_x = None, padding = [6, (Window.height * .025)])
 		self.nameEntry.bind(on_text_validate = self.changeName)
 		self.nameEntry.bind(focus = self.changeNameFocus)
 		self.titleLayout.add_widget(self.nameEntry)
@@ -219,7 +219,7 @@ class PortfolioEditorLayout(GridLayout):
 		self.centeringLabel = Label(text = "", size_hint_y = None, size_hint_x = None, 
 			height = Window.height * .1, width = Window.width *.45)
 		self.centeringLayout.add_widget(self.centeringLabel)
-		self.addStockButton = IconButton(self.addStock, "add", (0, 1, 0, .5))
+		self.addStockButton = IconButton(self.addStock, "add", (0, 1, 0, .6))
 		self.centeringLayout.add_widget(self.addStockButton)
 		self.add_widget(self.centeringLayout)
 		pickle.dump(self.activity.portfolios, open("res/userPortfolios.p", 'wb'))
@@ -273,7 +273,7 @@ class StockWidget(GridLayout):
 		self.stock = stock
 		self.master = master
 		self.app = app
-		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 0, 0, .5))
+		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
 		self.abbrLabel = Label(text = stock.abbr+"\n"+stock.name, font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .1, size_hint_y = None,
@@ -282,28 +282,36 @@ class StockWidget(GridLayout):
 		self.add_widget(self.abbrLabel)
 		self.detailLayout = GridLayout(cols = 1, height = Window.height * .1, size_hint_y = None)
 		self.valueLayout = GridLayout(rows = 1, height = Window.height * .05, size_hint_y = None)
-		self.avgCostLabel = Label(text = "Initial Cost: {0:.2f}".format(stock.purchasePrice), font_name = "res/Aldrich", font_hinting = "light",
+		self.avgCostLabel = Label(text = "Initial Cost: ${0:.2f}".format(stock.purchasePrice), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.avgCostLabel.text_size[0] = self.avgCostLabel.width
 		self.valueLayout.add_widget(self.avgCostLabel)
-		self.valueLabel = Label(text = "Current Value: {0:.2f}".format(stock.currentPrice), font_name = "res/Aldrich", font_hinting = "light",
+		self.valueLabel = Label(text = "Current Value: ${0:.2f}".format(stock.currentPrice), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.valueLabel.text_size[0] = self.valueLabel.width
 		self.valueLayout.add_widget(self.valueLabel)
 		self.detailLayout.add_widget(self.valueLayout)
 		self.profitLayout = GridLayout(rows = 1, height = Window.height * .05, size_hint_y = None)
-		self.flatLabel = Label(text = "Profit: {0:.2f}".format(stock.flatProfit), font_name = "res/Aldrich", font_hinting = "light",
+		self.flatLabel = Label(text = "Profit: ${0:.2f}".format(stock.flatProfit), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.flatLabel.text_size[0] = self.flatLabel.width
 		self.profitLayout.add_widget(self.flatLabel)
 		self.percentLabel = Label(text = "Percent Change: {0:.2f}%".format(stock.percentProfit), font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .05, size_hint_y = None,
-								width = Window.width * .36, size_hint_x = None)
+								width = Window.width * .36, size_hint_x = None,
+								halign = "center", valign = "center")
+		self.percentLabel.text_size[0] = self.percentLabel.width
 		self.profitLayout.add_widget(self.percentLabel)
 		self.detailLayout.add_widget(self.profitLayout)
 		self.add_widget(self.detailLayout)
 		with self.canvas:
-			Color(128/255, 128/255, 128/255, 1)
+			Color(100/255, 149/255, 237/255, .86)
 			self.underLine = Line(points = [self.x + .1 * self.width, self.y, self.x + .9 * self.width, self.y], 
 									width = .5, cap = 'round', joint = 'round', close = False)
 		self.bind(pos = self.manageLine, size = self.manageLine)
@@ -312,7 +320,7 @@ class StockWidget(GridLayout):
 	def manageLine(self, *args):
 		self.canvas.remove(self.underLine)
 		with self.canvas:
-			Color(128/255, 128/255, 128/255, 1)
+			Color(100/255, 149/255, 237/255, .86)
 			self.underLine = Line(points = [self.x + .1 * self.width, self.y, self.x + .9 * self.width, self.y], 
 									width = .5, cap = 'round', joint = 'round', close = False)
 
@@ -341,7 +349,7 @@ class StockWidget(GridLayout):
 
 	def seppuku(self, *args):
 		self.master.portfolio.removeStock(self.stock)
-		self.master.update()
+		self.master.updateLoader()
 
 	def toStock(self):
 		self.app.activities["search"].artificialUpdateGraph(self.stock.abbr)
@@ -353,16 +361,19 @@ class StockAdderWidget(GridLayout):
 		self.bind(minimum_height=self.setter('height'))
 		self.activity = activity
 		self.master = master
-		self.searchLayout = GridLayout(rows = 1, size_hint_y = None)
+		self.searchLayout = GridLayout(rows = 1, size_hint_y = None, height = Window.height * .1)
 		self.searchBar = SearchBar(self, self.activity, self.activity.searchDB)
 		self.searchLayout.add_widget(self.searchBar)
 		self.cancelButton = Button(text = "Cancel", font_name = "res/Aldrich", font_hinting = "light",
 								font_size = 15, height = Window.height * .1, size_hint_y = None,
-								width = Window.width * .3, size_hint_x = None)
+								size_hint_x = .3)
 		self.cancelButton.bind(on_press = self.back)
 		self.searchLayout.add_widget(self.cancelButton)
 		self.add_widget(self.searchLayout)
-		self.searchRecLayout = None
+		self.searchRecLayout = GridLayout(cols = 1, 
+				size_hint_y = None, height = Window.height * 1)
+		self.add_widget(self.searchRecLayout)
+			
 
 	def back(self, *args):
 		self.activity.titleLabel.text = self.master.portfolio.name + "'s Stocks"
@@ -430,8 +441,8 @@ class SearchBar(TextInput):
 		#db = (searchables, SearchTree)
 		super().__init__(hint_text = "Company...", background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1),
-			multiline = False, size_hint_y = None, size_hint_x = None, 
-			height = Window.height * .1, width = Window.width * .7)
+			multiline = False, size_hint_y = None, size_hint_x = .7, 
+			height = Window.height * .1)
 		if not searchDB:
 			searchables = pickle.load(open("res/searchables.p", 'rb'))
 			self.crossRefs = pickle.load(open("res/crossMark6.p", 'rb'))
@@ -452,9 +463,12 @@ class SearchBar(TextInput):
 				size_hint_y = None, height = Window.height * 1)
 			if self.text:
 				self.autofill(self.text)
-			self.activity.swap(self.searchRecLayout)
-		else:
-			self.activity.swap()
+			if self.master.searchRecLayout:
+				self.master.remove_widget(self.master.searchRecLayout)
+			self.master.add_widget(self.searchRecLayout)
+			self.master.searchRecLayout = self.searchRecLayout
+		# else:
+		# 	self.activity.swap()
 
 	def autofill(self, *args):
 		if args[-1]:
@@ -490,6 +504,7 @@ class SearchBar(TextInput):
 					self.activity.swap(PortfolioEditorLayout(self.master.master.portfolio, self.activity))
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)
+			self.searchRecLayout.height = Window.height * .1 * len(recommend)
 			if self.master.searchRecLayout:
 				self.master.remove_widget(self.master.searchRecLayout)
 			self.master.add_widget(self.searchRecLayout)

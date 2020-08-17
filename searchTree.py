@@ -1,4 +1,3 @@
-
 class Node():
 	def __init__(self, content, visible, children = None):
 		self.content = content

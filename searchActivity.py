@@ -1,27 +1,16 @@
-from kivy.app import App 
 from kivy.clock import Clock
-from kivy.uix.widget import Widget
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
 from stockGraph import StockGraph
 from rangeButton import RangeButton
-from searchTree import SearchTree
 from stockInfo import StockInfo
 from popups import LoadingPopup, ErrorPopup
 from errors import BadTickerException
-import yfinance as yf
-import numpy as np
-import datetime	
 import pickle
-import time
 
 
 class SearchActivity(GridLayout):
@@ -127,10 +116,10 @@ class SearchActivity(GridLayout):
 			self.stockGraph.height + self.rangeLayout.height)
 
 	def removeText(self, *args):
-		if not self.searchText.text: 
-			return
+		# if not self.searchText.text: 
+		# 	return
 		self.searchText.text = ""
-		self.searchText.focus = False
+		self.swap()
 
 	def updateColors(self):
 		if not self.stockGraph: 
@@ -164,17 +153,19 @@ class SearchActivity(GridLayout):
 			self.errorPopup = ErrorPopup(errmsg)
 			self.errorPopup.open()
 		# except IndexError as e:
-			
+
 		self.loading.dismiss()
 
 	def updateInfo(self, newTicker):
 		try:
 			self.stockInfo = self.stockGraph.ticker.info
 		except:
+			self.stockInfo = dict()
 			print("Unable to load info for", newTicker)
 		try:
 			self.tickerTitle.text = newTicker + "\n" + self.stockInfo["longName"]
 		except:
+			self.tickerTitle.text = newTicker 
 			print("longName failed")
 
 	def artificialUpdateGraph(self, ticker):
@@ -219,8 +210,8 @@ class SearchBar(TextInput):
 			if self.text:
 				self.autofill(self.text)
 			self.alpha.swap(self.searchRecLayout)
-		else:
-			self.alpha.swap()
+		# else:
+		# 	self.alpha.swap()
 
 	def autofill(self, *args):
 		if self.searchRecLayout and args[-1]:
@@ -250,6 +241,7 @@ class SearchBar(TextInput):
 				b.abbr = abbr
 				def useRec(itself):
 					self.text = itself.abbr
+					self.alpha.swap()
 					self.alpha.updateGraph()
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)

@@ -1,20 +1,13 @@
-from kivy.app import App 
-from kivy.uix.widget import Widget
+from kivy.clock import Clock
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
-from kivy.graphics import *
 from stockGraph import StockGraph
 from rangeButton import RangeButton
 from searchTree import SearchTree
-import yfinance as yf
-import numpy as np
-import datetime	
 import pickle
 import requests
 
@@ -24,6 +17,29 @@ class RankActivity(GridLayout):
 		self.alpha = alpha
 		self.crossRefs = pickle.load(open("res/crossMark6.p", 'rb'))
 		self.bind(minimum_height=self.setter('height'))
+		self.newCat = ""
+		self.sortby = 1
+		self.titleText = "Signal Rankings"
+		self.titleLabel = Label(text = self.titleText, font_name = "res/Aldrich", font_hinting = "light",
+								height = Window.height * .1, size_hint_y = None, halign = "left", font_size = 24)
+		self.add_widget(self.titleLabel)
+		self.sortLayout = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.height * .1)
+		self.sortLabel = Label(text = "Sort by:", font_name = "res/Aldrich", font_hinting = "light",
+								height = Window.height * .1, size_hint_y = None, halign = "left", size_hint_x = .5)
+		self.sortLabel.text_size[0] = self.sortLabel.width
+		self.sortLayout.add_widget(self.sortLabel)
+		self.sortByBuy = Button(text = "Buy", font_name = "res/Aldrich", font_hinting = "light",
+								height = Window.height * .1, size_hint_y = None, size_hint_x = .25, 
+								background_color = (0, 1, 0, 1))
+		self.sortByBuy.bind(on_press = self.setToBuy)
+		self.sortLayout.add_widget(self.sortByBuy)
+		self.sortBySell = Button(text = "Sell", font_name = "res/Aldrich", font_hinting = "light",
+								height = Window.height * .1, size_hint_y = None, size_hint_x = .25,
+								background_color = (1, 1, 1, 0))
+		self.sortBySell.bind(on_press = self.setToSell)
+		self.sortLayout.add_widget(self.sortBySell)
+		self.add_widget(self.sortLayout)
+
 		self.searchLayout = BoxLayout(orientation='horizontal')
 		self.searchText = SearchBarCompare(self)
 		self.searchText.bind(on_text_validate = self.updateList)
@@ -40,6 +56,18 @@ class RankActivity(GridLayout):
 		self.searchLayout.height = Window.height * .1
 		self.dataLayout.size_hint_y = None
 		self.dataLayout.height = Window.height * 1
+
+	def setToBuy(self, *args):
+		self.sortByBuy.background_color = (0, 1, 0, 1)
+		self.sortBySell.background_color = (1, 1, 1, 0)
+		self.sortby = 1
+		self.resortList()
+
+	def setToSell(self, *args):
+		self.sortByBuy.background_color = (1, 1, 1, 0)
+		self.sortBySell.background_color = (1, 0, 0, 1)
+		self.sortby = 2
+		self.resortList()
 
 	def removeText(self, *args):
 		if not self.searchText.text: 
@@ -63,32 +91,45 @@ class RankActivity(GridLayout):
 		stocksDict = jstocks["Stocks"]
 		stocks = []
 		for stock in stocksDict:
-			stocks.append([stock["ABBR"], int(stock["OT"]), int(stock["ELAST"]), int(stock["STABLE"]), int(stock["ROI5Y"]), int(stock["ROI1Y"])])
-		#stocks = sorted(stocks, key= lambda stock: sum(stock[1:]))
+			stocks.append([stock["ABBR"], float(stock["BUY"]), float(stock["SELL"])])
+		stocks = sorted(stocks, key= lambda stock: stock[self.sortby])
 		return stocks
 
-	def updateList(self, *args):
-		if not self.searchText.text: 
+	def resortList(self):
+		if not self.newCat:
 			return
-		newCat = self.searchText.text
-		self.searchText.text = ""
 		try:
 			self.dataLayout = BoxLayout(orientation = "vertical")
 			stocks = []
-			if newCat in self.searchText.crossRefs:
-				stocks = self.downloadCat(newCat)
+			if self.newCat in self.searchText.crossRefs:
+				stocks = self.downloadCat(self.newCat)
+				self.titleLabel.text = self.newCat + " " + self.titleText
 			for stock in reversed(stocks):
 				abbr = stock[0]
-				name = self.crossRefs[abbr]
-				OT, ELAST, STABLE, ROI5Y, ROI1Y = stock[1:]
-				txt = (abbr + ": " + name + " - " + str(OT) + " " + str(ELAST) + " " +
-						str(STABLE) + " " + str(ROI5Y) + " " + str(ROI1Y))
+				buy = stock[1]
+				sell = stock[2]
+				if abbr in self.crossRefs:
+					name = self.crossRefs[abbr]
+				elif abbr[:-1] in self.crossRefs:
+					name = self.crossRefs[abbr[:-1]]
+				else:
+					continue
+				txt = (abbr + ": " + name )
+				if self.sortby == 1:
+					txt += " +" + str(buy)
+				if self.sortby == 2:
+					txt += " -" + str(sell)
 				b = Button(text = txt, height = Window.height * .1,
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.abbr = abbr
 				def viewGraph(itself):
-					self.alpha.activities["search"].artificialUpdateGraph(itself.abbr)
-					self.alpha.activitySelect.artificialClick("search")
+					if "stats" not in self.alpha.activities:
+						self.alpha.activitySelect.makeCompareActivityExceptImAHomelessManThatDoesntKnowHowToCode(itself.abbr)
+						self.alpha.activitySelect.artificialClick("stats")
+					else:
+						self.alpha.activities["stats"].artificialUpdateGraph(itself.abbr)
+						self.alpha.activities["stats"].removeText()
+						self.alpha.activitySelect.artificialClick("stats")
 				b.bind(on_press = viewGraph)
 				self.dataLayout.add_widget(b)
 			self.dataLayout.size_hint_y = None
@@ -98,37 +139,57 @@ class RankActivity(GridLayout):
 			print(e)
 			return
 
-	'''
 	def updateList(self, *args):
 		if not self.searchText.text: 
 			return
-		newCat = self.searchText.text
+		self.newCat = self.searchText.text
 		self.searchText.text = ""
 		try:
 			self.dataLayout = BoxLayout(orientation = "vertical")
-			stocks = self.searchText.crossRefs[newCat]
-			for stock in stocks:
-				abbr, name = stock
-				b = Button(text = abbr + ": " + name, height = Window.height * .1,
+			stocks = []
+			if self.newCat in self.searchText.crossRefs:
+				stocks = self.downloadCat(self.newCat)
+				self.titleLabel.text = self.newCat + " " + self.titleText
+			for stock in reversed(stocks):
+				abbr = stock[0]
+				buy = stock[1]
+				sell = stock[2]
+				if abbr in self.crossRefs:
+					name = self.crossRefs[abbr]
+				elif abbr[:-1] in self.crossRefs:
+					name = self.crossRefs[abbr[:-1]]
+				else:
+					continue
+				txt = (abbr + ": " + name)
+				if self.sortby == 1:
+					txt += " +" + str(buy)
+				if self.sortby == 2:
+					txt += " -" + str(sell)	
+				b = Button(text = txt, height = Window.height * .1,
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.abbr = abbr
 				def viewGraph(itself):
-					self.alpha.activities["search"].artificialUpdateGraph(itself.abbr)
-					self.alpha.activitySelect.artificialClick("search")
+					if "stats" not in self.alpha.activities:
+						self.alpha.activitySelect.makeCompareActivityExceptImAHomelessManThatDoesntKnowHowToCode(itself.abbr)
+						self.alpha.activitySelect.artificialClick("stats")
+					else:
+						self.alpha.activities["stats"].artificialUpdateGraph(itself.abbr)
+						self.alpha.activities["stats"].removeText()
+						self.alpha.activitySelect.artificialClick("stats")
 				b.bind(on_press = viewGraph)
 				self.dataLayout.add_widget(b)
 			self.dataLayout.size_hint_y = None
 			self.dataLayout.height = Window.height * .1 * len(stocks)
 			self.swap()
-		except:
-			print("Unga Bunga, error occured")
+		except Exception as e:
+			print(e)
 			return
-	'''
+
 
 
 class SearchBarCompare(TextInput):
 	def __init__(self, alpha):
-		super().__init__(hint_text = "Company...", background_color = (0, 0, 0, 0),
+		super().__init__(hint_text = "Category...", background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1),
 			multiline = False)
 		self.crossRefs = pickle.load(open("res/catDict.p", 'rb'))
