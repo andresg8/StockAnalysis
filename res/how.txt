@@ -1,0 +1,4 @@
+Search [search]
+Portfolios [money]
+Statistics [chart]
+Rankings [rank]

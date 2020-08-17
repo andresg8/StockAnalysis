@@ -1,0 +1,10 @@
+A different mathematical approach to volatility, Average
+True Range describes the range of prices a stock has 
+been occupying in the given look-back period. 
+A bigger ATR means a bigger range
+of prices and thus more volatility. Strong up or down
+trends are typically accompanied by increases in ATR.
+Sudden changes in price that aren't then followed by
+and increase in ATR are often failed trends meaning
+that price will likely not continue to increase or
+decrease as sharply. 

@@ -1,0 +1,12 @@
+Similar to the On Balance Volume indicator, this 
+oscillator visualizes the battle between buyers
+and sellers of a stock. In this case, volume and
+price direction are used to generate the estimated
+momentum of volume support. The Chaikin Oscillator
+produces Buy Signals it crosses up the zero line
+into positive territory and Sell Signals when it crosses
+down into negative territory. However, CO can often
+confirm trends by showing positive slopes while
+it's in positive territory [implying the uptrend is
+strong] or by showing negative slopes while in negative
+territory [implying the downtrend is strong].

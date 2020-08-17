@@ -1,0 +1,22 @@
+The Relative Strength Index is a Statistic that aims
+to signal when a stock is being overbought or oversold.
+Identical to the idea seen in Bollinger Bands, where 
+sharp movements towards the bands can signal an
+incoming bounce-back, the RSI predicts these bounces
+when the indicator shoots beyond a cap or drops below
+a floor. Mathematically, the RSI is always a value
+between 0 and 100. The cap is the red line towards
+or at the top of the graph and represents a value of 70
+while the floor is the red line near or at the bottom
+and represents a value of 30. An RSI value above 70
+or below 30 is considered statistically improbable and
+thus suggests that the trend is more likely to reverse
+than continue. Crossing the cap line [above 70]
+signals a likely drop in the stock's price while
+crossing the floor line [below 30] signals a likely
+increase in the stock's price. Signals from the RSI
+are rare and the values for cap and floor arguably
+shouldn't be written in stone as 70 and 30 respectively.
+It is sometimes enough for the RSI to reach an unusual
+extreme [high or low], relative to its history, for it 
+to signal that the price is about to change directions.

@@ -1,0 +1,44 @@
+Bollinger Bands aim to visualize the volatility of 
+a stock using a Moving Average and calculating the
+standard deviation between said average and the
+actual price. The middle line is the Moving Average
+and the top and bottom bands are calculated at 2
+standard deviations above and below respectively. 
+When the actual daily price
+is constantly and significantly defying it's Moving
+Average, clearly, volatility is high and thus the bands
+become more widely seperated. As volatility reduces,
+the bands narrow in closer to the Moving Average.
+
+With this indicator, we want to focus on two
+scenarios both of which are easy to see on just
+about any stock over a 1 Year span:
+
+There are always periods of low
+volatility followed by period of high volatility.
+This means that the bands widen then narrow
+periodically. The best way to take advantage of this
+undeniable pattern is to combine it with other stats
+or the reality the company is facing. If other stats
+indicate the stock is doing well or you believe the
+company stands to gain due to current events and the
+bands are narrow, it may be the perfect time to invest.
+This is because we know the bands will widen soon
+and the only way they widen is if the price
+changes significantly. In this hypothetical, we have
+reason to believe that this significant change will be 
+in a positive direction.
+
+On the flip side, significant changes in daily price
+that go beyond the bands are statistically improbable
+[see 2 standard deviations]. When this occurs, it's
+more likely that the change is unsustainable which
+will result in the daily price bouncing back towards 
+the average line. Going
+back to the previous hypothetical, say you invest 
+during low volatility [narrow bands] and the price
+shoots up but it goes beyond the top Bollinger Band. 
+This could signal a good time to sell because
+it might be the peak of this increase, wait any longer
+and the price will likely rubberband back down towards
+the Moving Average.

@@ -1,0 +1,16 @@
+Volume is the total number of shares exchanged [buy OR sell] 
+throughout a day. On Balance Volume intends to indicate
+whether volume consisted of more buys than sells or vice
+versa. It functions under the assumption that an increase
+in price means a domination of buys over sells while
+a decrease in price means a domination of sells over
+buys. In this manner, the graph for On Balance Volume
+demonstrates how strongly volume is working with
+a change in price. The sharper the change in the OBV,
+the stronger it's implied that volume is supporting
+the change in price. On the other hand, sharp changes
+in price without sharp changes in OBV can mean that
+the trend is weak and thus unsustainable. Typically,
+trends that are supported by volume are reliable so
+if you want to invest in a stock and you see that volume
+is on its side, you've got a good green light. 

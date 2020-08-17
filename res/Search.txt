@@ -1,0 +1,10 @@
+Search offers a clear view of a stock's price over
+time with labels for the minimum, maximum, and average
+found in the selected time frame. When available, Search
+also provides fundamental information for understanding
+the stock's business or operations.
+
+Does a Search function really need a manual these days?
+Could a manual describing Search really beat anyone's 
+internal understanding of searching anymore? I don't think so
+but I already told myself I'd write this so too bad.

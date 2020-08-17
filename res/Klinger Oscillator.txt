@@ -1,0 +1,14 @@
+Another volume-centric indicator, the Klinger Oscillator
+uses the concept of Volume Force which is a multiplicative
+function across volume, price, and trend. Very similar
+to On Balance Volume and the Chaikin Oscillator, the KO 
+tries to predict a change in momentum from a majority
+of sellers into a majority of buyers. In this case,
+rather than a zero line, a Moving Average is used to 
+generate signals. The KO line tends to have sharp
+edges while its Moving Average is much smoother, when
+the actual value [KO] crosses the average, a signal is
+produced. Crossing the smooth average line with a negative
+slope implies that buyers are losing momentum to sellers
+which often leads to a decrease in price. The opposite
+is true when the cross occurs with a positive slope. 

@@ -1,0 +1,7 @@
+Moving Average
+Bollinger Bands
+Relative Strength Index
+Average True Range
+On Balance Volume
+Chaikin Oscillator
+Klinger Oscillator

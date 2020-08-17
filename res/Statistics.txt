@@ -1,0 +1,32 @@
+While very similar to Search, this function trades some
+clarity and simplicity for the power of Statistical
+Analysis. This function's graph displays any of the
+listed statistical descriptors parallel to the stock's
+price as well as any Buy/Sell signals associated with
+the chosen statistic. 
+
+Some stats can be tuned based on a look-back period
+[the number to the stat's right]. In all cases a larger
+look-back period means the stat will lag more and thus
+produce "delayed" information [including signals].
+Some argue, however, that this more delayed
+information can provide stronger insight into the long
+term
+future of the stock. A smaller look-back period will
+cause the stat to follow the stock's price more closely
+and thus provide information much sooner. Admittedly,
+however, this can lead to false positives more often
+especially when the stock is stagnant. Wider ranges,
+such as the 2-Year range, are often more informative
+with longer look-back periods.
+
+DISCLAIMER: Buy/Sell Signals are not personal recommendations
+nor am I a clairvoyant. The produced signals are merely
+visualizations of the statistical significances 
+involved and are error prone if only due to the volatile
+nature of the Stock Market. The strongest way to use this
+tool is when there already exists a stock you'd like to
+invest in; then, use the stats available to determine
+the best time to buy shares. For detailed information
+on the statistics provided, please read the entries under 
+the "What is..." category.

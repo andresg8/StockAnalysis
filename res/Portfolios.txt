@@ -1,0 +1,22 @@
+The Portfolios function allows you to simulate investments
+in a stock and track the success of those investments as a
+portfolio.
+
+There's no option for number of shares to buy
+because the focus is on the "Percent Change:" indicator.
+This value establishes an even playing field among all
+the stocks in the portfolio. Essentially, if a stock is
+bought at $0.30 and its current value is $0.60, the
+Percent Change is of 100% meaning investing in the
+company would've doubled your money even if the change
+in value is of $0.30 only. This same flat change on a
+stock initially worth $3.00 results in a Percent Change
+of 10% which is accurately reflective on the success
+of the investment.
+
+Perfect for practicing investment strategies, this
+function works best in tandem with the Statistics
+function. Are you seeing buy signals or patterns you
+like but you're still not sure you can commit money on
+them? Test your ideas with this function and soon enough
+you'll be confident enough to start making money!

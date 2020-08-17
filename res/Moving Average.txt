@@ -1,0 +1,58 @@
+A Moving Average with a look-back period of 1 day
+is the average everyone knows: A sum of all parts
+divided by the number of parts. A look-back period
+of anything greater than 1 and the average is in motion!
+This means the "parts" include information from previous
+days as well as the most recent one. The effect here
+is that a Moving Average will look a lot smoother than
+the data it describes because it represents momentum.
+An extended decline in price with small upward spikes
+will have a strictly negative moving average if the
+upward spikes are too weak to affect the stock's
+general momentum.
+
+Buy/Sell signals across the Moving Average stats are
+produced when the stock's price intersects with the
+Moving Average. If the stock price drops below the
+Moving Average, it could mean that the stock is due to
+gain momentum in a negative direction. Alternatively,
+if the stock price crosses above the Moving Average,
+it could mean the stock is building positive momentum.
+Small look-back periods for Moving Averages make them
+susceptible to false signals when significant
+changes in stock price are absent. In cases where the
+price is mostly just moving sideways and a big positive
+or negative change hasn't occured recently, you're likely
+better off using the other Statistics provided.
+
+Simple Moving Average [SMA] is just what it sounds like, simple.
+No fancy math, it really is just a sum of parts divided
+by the number of parts, only it takes multiple days into
+account.
+
+Exponential Moving Average [EMA] is by far my favorite
+Statistic due to the success I've seen with it. Instead
+of doing a simple average over all the parts included,
+the EMA assigns weights to each day depending on how
+far in the past they are. The older the information, the
+less weight it brings to the EMA. This means the line
+is ready to react to recent changes in daily price without
+disregarding information from the past. This idea is the
+cornerstone of Statistical Analysis, using the past
+to guesstimate the future. 
+
+Triple EMA is a Frankenstein's monster of the previously
+seen EMA as it applies to itself and is calculated
+as follows:
+
+3*EMA1 - 3*EMA2 + EMA3 
+
+where EMA1 is the EMA of the
+stock's daily price, EMA2 is the EMA of EMA1, and so on.
+Moving Averages, as mentioned previously, represent
+momentum so when we take the EMA of an EMA, we're
+looking at the rate of change of a rate of change.
+In a way, this makes the Triple EMA a function of the
+daily price's third derivative. The result is that the
+Triple EMA is more sensitive to slopes in daily price 
+than a standard EMA. 

@@ -1,0 +1,10 @@
+Using the same statistical analysis tools available to
+you through the Statistics function [as well minor in-house
+analysis to filter noise], stocks are ranked daily 
+based on how many Buy/Sell signals are present in 
+their latest 2 Week span.
+
+Ranking all stocks in existence and then displaying all
+of them seemed like a silly idea so instead the function
+allows you to search through industry/category and
+in doing so allows for comparison within an industry.
