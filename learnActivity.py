@@ -18,7 +18,7 @@ class LearnActivity(GridLayout):
 		self.bind(minimum_height=self.setter('height'))
 		self.app = app
 		self.titleLabel = Label(text = "Learn!", font_name = "res/Aldrich", 
-			font_hinting = "light", bold = True, italic = True, font_size = 24,
+			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
 			halign = "left", height = Window.height * .1, size_hint_y = None)
 		self.add_widget(self.titleLabel)
 		# List of buttons that redirect to a datalayout for the txt file contents
@@ -28,7 +28,7 @@ class LearnActivity(GridLayout):
 		
 		# How do I use?
 		self.howLabel = Label(text = "How do I use...", font_name = "res/Aldrich", 
-			font_hinting = "light", bold = True, italic = True, font_size = 24,
+			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
 			halign = "left", valign = "center", height = Window.height * .1, 
 			size_hint_y = None)
 		self.howLabel.bind(size = self.howLabel.setter("text_size"))
@@ -46,7 +46,7 @@ class LearnActivity(GridLayout):
 					bookIcon = IconButton(icon, self.spin)
 					bookLayout.add_widget(bookIcon)
 				bookTitle = Button(text = txt, font_name = "res/Aldrich", 
-					font_hinting = "light", bold = True, italic = True, font_size = 18,
+					font_hinting = "light", bold = True, italic = True, font_size = "18sp",
 					halign = "left", valign = "center", height = Window.height * .1, 
 					size_hint_y = None, background_color = (1, 1, 1, 0))
 				bookTitle.bind(size = bookTitle.setter("text_size"), on_press = self.openPage)
@@ -55,7 +55,7 @@ class LearnActivity(GridLayout):
 				self.libraryLayout.add_widget(bookLayout)
 		# What is?
 		self.whatLabel = Label(text = "What is...", font_name = "res/Aldrich", 
-			font_hinting = "light", bold = True, italic = True, font_size = 24,
+			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
 			halign = "left", valign = "center", height = Window.height * .1, 
 			size_hint_y = None)
 		self.whatLabel.bind(size = self.whatLabel.setter("text_size"))
@@ -74,7 +74,7 @@ class LearnActivity(GridLayout):
 				else: 
 					bookLayout.padding = [Window.width * .05, 0]
 				bookTitle = Button(text = txt, font_name = "res/Aldrich", 
-					font_hinting = "light", bold = True, italic = True, font_size = 18,
+					font_hinting = "light", bold = True, italic = True, font_size = "18sp",
 					halign = "left", valign = "center", height = Window.height * .1, 
 					size_hint_y = None, background_color = (1, 1, 1, 0))
 				bookTitle.bind(size = bookTitle.setter("text_size"), on_press = self.openPage)
@@ -110,7 +110,7 @@ class BookPage(GridLayout):
 		self.backButton = IconButton("back", self.back)
 		self.bar.add_widget(self.backButton)
 		self.titleLabel = Label(text = src, font_name = "res/Aldrich", 
-					font_hinting = "light", bold = True, italic = True, font_size = 24,
+					font_hinting = "light", bold = True, italic = True, font_size = "24sp",
 					halign = "left", valign = "center", height = Window.height * .1, 
 					size_hint_y = None)
 		self.titleLabel.bind(size = self.titleLabel.setter("text_size"))
@@ -123,7 +123,7 @@ class BookPage(GridLayout):
 			lines = file.readlines()
 			self.content = "".join([line.strip() + " " if line.strip() else "\n\n" for line in lines])
 		self.contentLabel = Label(text = self.content, font_name = "res/Aldrich", 
-					font_hinting = "light", bold = True, italic = True, font_size = 15,
+					font_hinting = "light", bold = True, italic = True, font_size = "15sp",
 					halign = "justify", valign = "top", width = Window.width * .9, 
 					size_hint_y = None, line_height = 1.5)
 		# self.contentLabel.bind(size = self.contentLabel.setter("text_size"),

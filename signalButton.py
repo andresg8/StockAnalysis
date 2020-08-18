@@ -42,6 +42,7 @@ class SignalButton(Button):
 				self.highlights = Line(rounded_rectangle=args, width = 1.2)
 
 	def draw(self, *args):
+		self.text_size[0] = self.width
 		if self.active:
 			self.drawSelected()
 		else:

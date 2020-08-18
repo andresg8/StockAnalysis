@@ -256,8 +256,9 @@ class SearchBar(TextInput):
 				if txt in txts:
 					continue
 				txts.append(txt)
-				b = Button(text = txt, height = Window.height * .1,
+				b = Button(text = txt, height = Window.height * .1, halign = "center",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
+				b.text_size[0] = Window.width
 				b.abbr = abbr
 				def useRec(itself):
 					self.text = itself.abbr
@@ -265,4 +266,5 @@ class SearchBar(TextInput):
 					self.alpha.updateLoader()
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)
+			self.searchRecLayout.height = Window.height * .1 * len(recommend)
 			self.alpha.swap(self.searchRecLayout)

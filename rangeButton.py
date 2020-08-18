@@ -16,7 +16,7 @@ import datetime
 
 class RangeButton(Button):
 	def __init__(self, text, alpha, r, interval):
-		super().__init__(text = text, font_name = "res/Aldrich", 
+		super().__init__(text = text, font_name = "res/Aldrich", font_size = "14sp",
 			font_hinting = "light", bold = True, background_color = (1,1,1,0),
 			halign = "center", valign = "center", color = (255/255, 255/255, 255/255, 1))
 		self.text = text

@@ -39,7 +39,7 @@ class LoadingPopup(Popup):
 			title = "", auto_dismiss = False)
 		# self.bind(minimum_height=self.setter('height'))
 		self.contentLayout = GridLayout(cols = 1)
-		self.loadingLabel = Label(text = "Loading...", font_size = 20,
+		self.loadingLabel = Label(text = "Loading...", font_size = "20sp",
 			font_name = "res/Aldrich", font_hinting = "light", bold = True,
 			halign = "center", valign = "center", width = self.width)
 		self.contentLayout.add_widget(self.loadingLabel)

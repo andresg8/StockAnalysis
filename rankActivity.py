@@ -21,12 +21,12 @@ class RankActivity(GridLayout):
 		self.sortby = 1
 		self.titleText = "Signal Rankings"
 		self.titleLabel = Label(text = self.titleText, font_name = "res/Aldrich", font_hinting = "light",
-								height = Window.height * .1, size_hint_y = None, halign = "left", font_size = 24)
+								height = Window.height * .1, size_hint_y = None, halign = "left", font_size = "24sp")
 		self.add_widget(self.titleLabel)
 		self.sortLayout = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.height * .1)
 		self.sortLabel = Label(text = "Sort by:", font_name = "res/Aldrich", font_hinting = "light",
-								height = Window.height * .1, size_hint_y = None, halign = "left", size_hint_x = .5)
-		self.sortLabel.text_size[0] = self.sortLabel.width
+								height = Window.height * .1, size_hint_y = None, halign = "center", size_hint_x = .5)
+		self.sortLabel.text_size[0] = Window.width * .5
 		self.sortLayout.add_widget(self.sortLabel)
 		self.sortByBuy = Button(text = "Buy", font_name = "res/Aldrich", font_hinting = "light",
 								height = Window.height * .1, size_hint_y = None, size_hint_x = .25, 
@@ -119,8 +119,9 @@ class RankActivity(GridLayout):
 					txt += " +" + str(buy)
 				if self.sortby == 2:
 					txt += " -" + str(sell)
-				b = Button(text = txt, height = Window.height * .1,
+				b = Button(text = txt, height = Window.height * .1, halign = "center",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
+				b.text_size[0] = Window.width
 				b.abbr = abbr
 				def viewGraph(itself):
 					if "stats" not in self.alpha.activities:
@@ -165,8 +166,9 @@ class RankActivity(GridLayout):
 					txt += " +" + str(buy)
 				if self.sortby == 2:
 					txt += " -" + str(sell)	
-				b = Button(text = txt, height = Window.height * .1,
+				b = Button(text = txt, height = Window.height * .1, halign = "center",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
+				b.text_size[0] = Window.width
 				b.abbr = abbr
 				def viewGraph(itself):
 					if "stats" not in self.alpha.activities:
@@ -225,4 +227,5 @@ class SearchBarCompare(TextInput):
 					self.alpha.updateList()
 				b.bind(on_press = useRec)
 				self.searchRecLayout.add_widget(b)
+			self.searchRecLayout.height = Window.height * .1 * len(recommend)
 			self.alpha.swap(self.searchRecLayout)

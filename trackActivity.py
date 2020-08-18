@@ -23,7 +23,7 @@ class TrackActivity(GridLayout):
 		self.app = app
 		self.searchDB = searchDB
 		self.titleLabel = Label(text = "Portfolios", font_name = "res/Aldrich", 
-			font_hinting = "light", bold = True, italic = True, font_size = 24,
+			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
 			halign = "left", height = Window.height * .1, size_hint_y = None)
 		self.add_widget(self.titleLabel)
 		try:
@@ -106,7 +106,7 @@ class PortfolioWidget(GridLayout):
 		self.portfolio = portfolio
 		self.activity = activity
 		self.master = master
-		fs = 13
+		fs = "12sp"
 		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
 		self.abbrLabel = Label(text = portfolio.name, font_name = "res/Aldrich", font_hinting = "light",
@@ -202,7 +202,7 @@ class PortfolioEditorLayout(GridLayout):
 		self.titleLayout.add_widget(self.backButton)
 		self.nameEntry = TextInput(text = self.portfolio.name, background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1), multiline = False, 
-			font_size = 24, height = Window.height * .1, size_hint_y = None, width = Window.width * .75, 
+			font_size = "24sp", height = Window.height * .1, size_hint_y = None, width = Window.width * .75, 
 			size_hint_x = None, padding = [6, (Window.height * .025)])
 		self.nameEntry.bind(on_text_validate = self.changeName)
 		self.nameEntry.bind(focus = self.changeNameFocus)
@@ -268,7 +268,7 @@ class PortfolioEditorLayout(GridLayout):
 class StockWidget(GridLayout):
 	def __init__(self, stock, master, app):
 		super().__init__(rows = 1, size_hint_y = None)
-		fs = 13
+		fs = "12sp"
 		self.bind(minimum_height=self.setter('height'))
 		self.stock = stock
 		self.master = master
@@ -365,7 +365,7 @@ class StockAdderWidget(GridLayout):
 		self.searchBar = SearchBar(self, self.activity, self.activity.searchDB)
 		self.searchLayout.add_widget(self.searchBar)
 		self.cancelButton = Button(text = "Cancel", font_name = "res/Aldrich", font_hinting = "light",
-								font_size = 15, height = Window.height * .1, size_hint_y = None,
+								height = Window.height * .1, size_hint_y = None,
 								size_hint_x = .3)
 		self.cancelButton.bind(on_press = self.back)
 		self.searchLayout.add_widget(self.cancelButton)
@@ -493,8 +493,9 @@ class SearchBar(TextInput):
 				if txt in txts:
 					continue
 				txts.append(txt)
-				b = Button(text = txt, height = Window.height * .1,
+				b = Button(text = txt, height = Window.height * .1, halign = "center",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
+				b.text_size[0] = Window.width
 				b.abbr = abbr
 				b.name = name
 				def useRec(itself):

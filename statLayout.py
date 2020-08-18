@@ -15,7 +15,7 @@ class StatLayout(GridLayout):
 		if rng:
 			self.rngEntry = TextInput(text = str(default), background_color = (0, 0, 0, 0),
 			foreground_color = (1, 1, 1, 1), cursor_color = (0, 1, 0, 1),
-			multiline = False, padding = [6, (Window.height * .05) - 10], hint_text = "10")
+			multiline = False, padding = [6, 20], hint_text = "10")
 			self.rngEntry.width = Window.width * .1
 			self.rngEntry.height = Window.height * .1
 			self.add_widget(self.rngEntry)

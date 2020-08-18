@@ -9,20 +9,20 @@ class StockInfo(GridLayout):
 	def __init__(self, ticker):
 		super().__init__(cols = 1, size_hint_y = None, padding = [Window.width * .05, 0])
 		self.ticker = ticker
-		self.nameLabel = Label(text = "", font_name = "res/Aldrich", font_size = 24,
+		self.nameLabel = Label(text = "", font_name = "res/Aldrich", font_size = "24sp",
 			font_hinting = "light", bold = True, halign = "left", valign = "center")
 		self.add_widget(self.nameLabel)
 		self.addressLabel = Label(text = "Address:", font_name = "res/Aldrich", 
-			font_size = 15, font_hinting = "light", halign = "left", valign = "center")
+			font_size = "15sp", font_hinting = "light", halign = "left", valign = "center")
 		self.add_widget(self.addressLabel)
 		self.phoneLabel = Label(text = "Phone:", font_name = "res/Aldrich", 
-			font_size = 15, font_hinting = "light", halign = "left", valign = "center")
+			font_size = "15sp", font_hinting = "light", halign = "left", valign = "center")
 		self.add_widget(self.phoneLabel)
 		self.websiteLabel = Label(text = "Website:", font_name = "res/Aldrich", 
-			font_size = 15, font_hinting = "light", halign = "left", valign = "center")
+			font_size = "15sp", font_hinting = "light", halign = "left", valign = "center")
 		self.add_widget(self.websiteLabel)
 		self.detailLabel = Label(text = "Details:", font_name = "res/Aldrich", 
-			font_size = 15, font_hinting = "light", halign = "justify", valign = "top",
+			font_size = "15sp", font_hinting = "light", halign = "justify", valign = "top",
 			line_height = 1.5)
 		self.getInfo()
 		self.add_widget(self.detailLabel)
