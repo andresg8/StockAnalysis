@@ -1,0 +1,14 @@
+My name is Andy Gonzalez, I have a Bachelors of Science
+in Computer Science and Engineering from the University 
+of California, Irvine. This app was made right after
+graduation as a quick showcase project to demonstrate 
+some of my programming abilities. To make it more fun
+for myself, this app was written in Python
+using the open source framework Kivy. Admittedly,
+this app is far from a masterpiece but I hope,
+and believe, it should be useful for anyone that has
+a little patience for it. For any questions, comments,
+or concerns please do not hesitate to reach me at
+the email below:
+
+shyldna@gmail.com
