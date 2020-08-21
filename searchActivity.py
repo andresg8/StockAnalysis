@@ -236,8 +236,8 @@ class SearchBar(TextInput):
 				if txt in txts:
 					continue
 				txts.append(txt)
-				b = Button(text = txt, height = Window.height * .1, halign = "center",
-					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
+				b = Button(text = txt, height = Window.height * .1, halign = "center", font_name = "res/Aldrich",
+					font_hinting = "light", size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.text_size[0] = Window.width
 				b.abbr = abbr
 				def useRec(itself):

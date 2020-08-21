@@ -119,7 +119,7 @@ class RankActivity(GridLayout):
 					txt += " +" + str(buy)
 				if self.sortby == 2:
 					txt += " -" + str(sell)
-				b = Button(text = txt, height = Window.height * .1, halign = "center",
+				b = Button(text = txt, height = Window.height * .1, halign = "center", font_name = "res/Aldrich", font_hinting = "light",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.text_size[0] = Window.width
 				b.abbr = abbr
@@ -166,7 +166,7 @@ class RankActivity(GridLayout):
 					txt += " +" + str(buy)
 				if self.sortby == 2:
 					txt += " -" + str(sell)	
-				b = Button(text = txt, height = Window.height * .1, halign = "center",
+				b = Button(text = txt, height = Window.height * .1, halign = "center", font_name = "res/Aldrich", font_hinting = "light",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.text_size[0] = Window.width
 				b.abbr = abbr
@@ -219,7 +219,7 @@ class SearchBarCompare(TextInput):
 				size_hint_y = None, height = Window.height * 1)
 			recommend = self.searchRecs.relateItem(args[-1].upper())
 			for cat in recommend:
-				b = Button(text = cat, height = Window.height * .1,
+				b = Button(text = cat, height = Window.height * .1, font_name = "res/Aldrich", font_hinting = "light",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.cat = cat
 				def useRec(itself):

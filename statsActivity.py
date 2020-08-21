@@ -92,8 +92,8 @@ class StatsActivity(GridLayout):
 		self.signalLineGrid = GridLayout(rows = 1, size_hint_y = None, height = Window.height * .1)
 		self.signalButtons = []
 		# No Signals, Sell Signals, Buy Signals, All Signals
-		combos = [("No Signals", self, False, False), ("Sell Signals", self, False, True), 
-				("Buy Signals", self, True, False), ("Both Signals", self, True, True)]
+		combos = [("No\nSignals", self, False, False), ("Sell\nSignals", self, False, True), 
+				("Buy\nSignals", self, True, False), ("Both\nSignals", self, True, True)]
 		for combo in combos:
 			sb = SignalButton(*combo)
 			self.signalButtons.append(sb)
@@ -256,7 +256,7 @@ class SearchBar(TextInput):
 				if txt in txts:
 					continue
 				txts.append(txt)
-				b = Button(text = txt, height = Window.height * .1, halign = "center",
+				b = Button(text = txt, height = Window.height * .1, halign = "center", font_name = "res/Aldrich", font_hinting = "light",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.text_size[0] = Window.width
 				b.abbr = abbr

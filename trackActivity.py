@@ -285,11 +285,10 @@ class StockWidget(GridLayout):
 		self.app = app
 		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
-		if len(stock.name) >= 450:
-			stockDescriptor = stock.abbr
-		else:
-			stockDescriptor = stock.abbr+"\n"+stock.name
-		self.abbrLabel = Label(text = stock.abbr+"\n"+stock.name, font_name = "res/Aldrich", font_hinting = "light",
+		stockDescriptor = stock.abbr+"\n"+stock.name
+		if len(stockDescriptor) >= 45:
+			stockDescriptor = stockDescriptor[:42] + "..."
+		self.abbrLabel = Label(text = stockDescriptor, font_name = "res/Aldrich", font_hinting = "light", 
 								font_size = fs, height = Window.height * .1, size_hint_y = None,
 								width = Window.width * .18, size_hint_x = None, halign = "center")
 		self.abbrLabel.text_size = [Window.width * .18, Window.height * .1]
@@ -512,7 +511,7 @@ class SearchBar(TextInput):
 				if txt in txts:
 					continue
 				txts.append(txt)
-				b = Button(text = txt, height = Window.height * .1, halign = "center",
+				b = Button(text = txt, height = Window.height * .1, halign = "center", font_name = "res/Aldrich", font_hinting = "light",
 					size_hint_max_y = Window.height * .1, size_hint_min_y = Window.height * .1)
 				b.text_size[0] = Window.width
 				b.abbr = abbr

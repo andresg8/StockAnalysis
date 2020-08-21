@@ -27,7 +27,9 @@ class StatsGraph(Widget):
 		"Triple EMA": (self.tripleEMA,  (255/255, 0/255, 255/255, 1)),
 		"On Balance Volume": (self.getOnBalanceVolume,  (0/255, 128/255, 0/255, 1)),
 		"Chaikin Oscillator": (self.getChaikinOscillator, (0/255, 168/255, 107/255, 1)),
-		"Klinger Oscillator": (self.getKlingerOscillator,  (141/255, 182/255, 0/255, 1))
+		"Klinger Oscillator": (self.getKlingerOscillator,  (141/255, 182/255, 0/255, 1)),
+		"Average Directional Indicator": (self.getADX,  (50/255, 205/255, 50/255, 1), 
+			(255/255, 69/255, 0/255, 1), (250/255, 128/255, 114/255, 1))
 		}
 		self.signalLines = dict()
 		self.buyLines = False
@@ -51,12 +53,17 @@ class StatsGraph(Widget):
 		if type(stats[0]) != list:
 			stats = [stats]
 		lastOne = stats[-1]
+		i = 1
 		for stat in stats:
 			if stat == lastOne and min(stat) in [0, -1] and max(stat) in [0, 1]:
 				self.signalLines[statLabel] = stat
 				continue
 			self.activeStats[statLabel].append(stat)
-			self.colorPallete[statLabel].append(self.stats[statLabel][1])
+			if statLabel == "Average Directional Indicator":
+				self.colorPallete[statLabel].append(self.stats[statLabel][i])
+			else:
+				self.colorPallete[statLabel].append(self.stats[statLabel][1])
+			i += 1
 		self.graphValores()
 		self.updateLine()
 
@@ -221,23 +228,54 @@ class StatsGraph(Widget):
 			else:
 				dataRange = max(line) - min(line)
 				if not dataRange:
-					y = line[0] * proportion
-					y = y - translate
-					y = (y-minv)*r + minh
-					points = [xinit, y, xinit + (w * .9), y]
+					COmod = None
+					if "Chaikin Oscillator" in self.activeStats:
+						for l in self.activeStats["Chaikin Oscillator"]:
+							if line == l[-match:]:
+								if min(self.activeStats["Chaikin Oscillator"][0][-match:]) > 0:
+									COmod = self.ybot
+								elif max(self.activeStats["Chaikin Oscillator"][0][-match:]) < 0:
+									COmod = self.ytop
+					if COmod:
+						points = [xinit, COmod, xinit + (w * .9), COmod]
+					else:
+						y = line[0] * proportion
+						y = y - translate
+						y = (y-minv)*r + minh
+						points = [xinit, y, xinit + (w * .9), y]
 				else:
 					RSIFlag = False
+					ADXFlag = False
 					if "Relative Strength Index" in self.activeStats:
 						for l in self.activeStats["Relative Strength Index"]:
 							if line == l[-match:]: 
 								RSIFlag = True
 								dataRange = max(line + [70]) - min(line + [30])
+					if "Average Directional Indicator" in self.activeStats:
+						for l in self.activeStats["Average Directional Indicator"]:
+							if line == l[-match:]: 
+								ADXFlag = True
+								maxs = [max(s[-match:]) for s in self.activeStats["Average Directional Indicator"]]
+								mins = [min(s[-match:]) for s in self.activeStats["Average Directional Indicator"]]
+								dataRange = max(maxs) - min(mins)
+								break
+					if "Klinger Oscillator" in self.activeStats:
+						for l in self.activeStats["Klinger Oscillator"]:
+							if line == l[-match:]: 
+								ADXFlag = True
+								maxs = [max(s[-match:]) for s in self.activeStats["Klinger Oscillator"]]
+								mins = [min(s[-match:]) for s in self.activeStats["Klinger Oscillator"]]
+								dataRange = max(maxs) - min(mins)
+								break
 					proportion = trueRange / dataRange
 					for y in range(len(line)):
 						line[y] *= proportion
 					translate = min(line) - minValue
 					if RSIFlag:
 						translate = min(line + [30 * proportion]) - minValue
+					if ADXFlag:
+						mins = [m * proportion for m in mins]
+						translate = min(mins) - minValue
 					for y in range(len(line)):
 						line[y] -= translate
 					for y in range(len(line)):
@@ -422,6 +460,53 @@ class StatsGraph(Widget):
 		avgValues = avgValues[clean]
 		dates = dates[clean]
 		return dates, avgValues
+
+	def getADX(self, rng = 14):
+		dates, lows, highs, opens, closes = self.getCandles(self.sixYearDaily)
+		DMpos = []
+		DMneg = []
+		for i in range(1, len(highs)):
+			pos = highs[i] - highs[i-1]
+			neg = lows[i-1] - lows[i]
+			if pos < 0 and neg < 0:
+				pos = 0
+				neg = 0
+			elif pos > neg:
+				neg = 0
+			elif neg > pos:
+				pos = 0
+			DMpos.append(pos)
+			DMneg.append(neg)
+		DMSpos = self.calcEMA(DMpos, rng)
+		DMSneg = self.calcEMA(DMneg, rng)
+		atr = self.getATR(rng)
+		match = len(DMSpos) if len(DMSpos) < len(atr) else len(atr)
+		atr = atr[-match:]
+		DMSpos = DMSpos[-match:]
+		DMSneg = DMSneg[-match:]
+		DIP = []
+		DIN = []
+		DX = []
+		for i in range(len(atr)):
+			DIpos =  (DMSpos[i]/atr[i]) * 100 
+			DIP.append(DIpos)
+			DIneg = (DMSneg[i]/atr[i]) * 100 
+			DIN.append(DIneg)
+		# 	DX.append(abs((DIpos - DIneg) / (DIpos + DIneg)) * 100)
+		# DX = np.asarray([x if np.isfinite(x) else 0 for x in DX])
+		# ADX = self.calcEMA(DX, rng)
+		signalLine = [25 for i in range(len(DIP))]
+		return DIP, DIN, signalLine
+
+	def calcSMA(self, data, rng):
+		moving = []
+		movingAverage = []
+		for v in range(len(data)):
+			moving.append(data[v])
+			if len(moving) >= rng:
+				movingAverage.append(sum(moving)/len(moving))
+				moving = moving[1:]
+		return movingAverage
 
 	def simpleMovingAverage(self, rng):
 		# rngPlusMonth = rng + 261

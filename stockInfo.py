@@ -45,6 +45,7 @@ class StockInfo(GridLayout):
 
 	def continuousHeight(self, *args):
 		self.nameLabel.text_size[0] = Window.width * .9
+		self.nameLabel.height = self.nameLabel.texture_size[1]
 		self.addressLabel.text_size[0] = Window.width * .9
 		self.phoneLabel.text_size[0] = Window.width * .9
 		self.websiteLabel.text_size[0] = Window.width * .9
