@@ -1,0 +1,14 @@
+By far the most difficult statistic among these to
+get right, the Average Directional Indicator (ADX)
+is meant to indicate the strength of a trend. Split
+into it's components, the red line indicates the 
+strength of a downtrend while the green line indicates
+the strength of an uptrend. Typically, when either
+one is above the peach colored horizontal line, it means
+their respective trend [+/-] is strong. A directional
+indicator going up means the trend is strengthening
+and the further above the peach line it is, the stronger
+it is. However, a directional indicator coming down means
+the trend is weakening so hitting a peak can often imply 
+that the trend is about to reverse if it isn't already
+doing so. 
