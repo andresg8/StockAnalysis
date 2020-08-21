@@ -13,7 +13,7 @@ class StockInfo(GridLayout):
 			font_hinting = "light", bold = True, halign = "left", valign = "center")
 		self.add_widget(self.nameLabel)
 		self.addressLabel = Label(text = "Address:", font_name = "res/Aldrich", 
-			font_size = "15sp", font_hinting = "light", halign = "left", valign = "center")
+			font_size = "15sp", font_hinting = "light", halign = "left", valign = "bottom")
 		self.add_widget(self.addressLabel)
 		self.phoneLabel = Label(text = "Phone:", font_name = "res/Aldrich", 
 			font_size = "15sp", font_hinting = "light", halign = "left", valign = "center")
@@ -29,7 +29,7 @@ class StockInfo(GridLayout):
 		self.nameLabel.size_hint_y = None
 		self.nameLabel.height = Window.height * .1
 		self.addressLabel.size_hint_y = None
-		self.addressLabel.height = Window.height * .1
+		self.addressLabel.height = Window.height * .15
 		self.phoneLabel.size_hint_y = None
 		self.phoneLabel.height = Window.height * .05
 		self.websiteLabel.size_hint_y = None

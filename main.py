@@ -24,7 +24,7 @@ class StockAnalysis(App):
 		############# Scroll View #############
 		#######################################
 		self.scrollView = ScrollView(size_hint = (1, None), do_scroll_x = False,
-			do_scroll_y = True, size = (Window.width, Window.height*.9), scroll_timeout = 100,
+			do_scroll_y = True, size = (Window.width, Window.height*.9), scroll_timeout = 250,
 			y = Window.height*.1)
 		def scrollViewScale(*args):
 			self.scrollView.size = (Window.width, Window.height*.9)
