@@ -24,7 +24,8 @@ class TrackActivity(GridLayout):
 		self.searchDB = searchDB
 		self.titleLabel = Label(text = "Portfolios", font_name = "res/Aldrich", 
 			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
-			halign = "left", height = Window.height * .1, size_hint_y = None)
+			halign = "center", height = Window.height * .1, size_hint_y = None)
+		self.titleLabel.text_size[0] = Window.width
 		self.add_widget(self.titleLabel)
 		try:
 			self.portfolios = pickle.load(open("res/userPortfolios.p", 'rb'))
@@ -67,6 +68,10 @@ class PortfolioWidgetsLayout(GridLayout):
 		self.addPortfolioButton = IconButton(self.addPortfolio, "add", (0, 1, 0, .6))
 		self.centeringLayout.add_widget(self.addPortfolioButton)
 		self.add_widget(self.centeringLayout)
+		# self.bind(pos = self.manageConduit, size = self.manageConduit)
+
+	def manageConduit(self, *args):
+		self.activity.app.conduit = None
 
 	def updateLoader(self, *args):
 		self.loading = LoadingPopup()
@@ -223,6 +228,10 @@ class PortfolioEditorLayout(GridLayout):
 		self.centeringLayout.add_widget(self.addStockButton)
 		self.add_widget(self.centeringLayout)
 		pickle.dump(self.activity.portfolios, open("res/userPortfolios.p", 'wb'))
+		self.bind(pos = self.manageConduit, size = self.manageConduit)
+
+	def manageConduit(self, *args):
+		self.activity.app.conduit = self
 
 	def updateLoader(self, *args):
 		self.loading = LoadingPopup()
@@ -252,6 +261,7 @@ class PortfolioEditorLayout(GridLayout):
 		self.add_widget(self.centeringLayout)
 
 	def back(self, *args):
+		self.activity.app.conduit = None
 		self.activity.titleLabel.text = "Portfolios"
 		self.activity.swap(PortfolioWidgetsLayout(self.activity.portfolios, self.activity))
 
@@ -275,10 +285,14 @@ class StockWidget(GridLayout):
 		self.app = app
 		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
+		if len(stock.name) >= 450:
+			stockDescriptor = stock.abbr
+		else:
+			stockDescriptor = stock.abbr+"\n"+stock.name
 		self.abbrLabel = Label(text = stock.abbr+"\n"+stock.name, font_name = "res/Aldrich", font_hinting = "light",
 								font_size = fs, height = Window.height * .1, size_hint_y = None,
 								width = Window.width * .18, size_hint_x = None, halign = "center")
-		self.abbrLabel.text_size[0] = self.abbrLabel.width
+		self.abbrLabel.text_size = [Window.width * .18, Window.height * .1]
 		self.add_widget(self.abbrLabel)
 		self.detailLayout = GridLayout(cols = 1, height = Window.height * .1, size_hint_y = None)
 		self.valueLayout = GridLayout(rows = 1, height = Window.height * .05, size_hint_y = None)
@@ -373,9 +387,14 @@ class StockAdderWidget(GridLayout):
 		self.searchRecLayout = GridLayout(cols = 1, 
 				size_hint_y = None, height = Window.height * 1)
 		self.add_widget(self.searchRecLayout)
+		self.bind(pos = self.manageConduit, size = self.manageConduit)
+
+	def manageConduit(self, *args):
+		self.activity.app.conduit = self
 			
 
 	def back(self, *args):
+		self.activity.app.conduit = None
 		self.activity.titleLabel.text = self.master.portfolio.name + "'s Stocks"
 		self.activity.swap(PortfolioEditorLayout(self.master.portfolio, self.activity))
 

@@ -33,7 +33,7 @@ class StockInfo(GridLayout):
 		self.phoneLabel.size_hint_y = None
 		self.phoneLabel.height = Window.height * .05
 		self.websiteLabel.size_hint_y = None
-		self.websiteLabel.height = Window.height * .05
+		self.websiteLabel.height = Window.height * .06
 		self.detailLabel.size_hint_y = None
 		self.detailLabel.height = Window.height * .4
 		self.continuousHeight()

@@ -98,7 +98,7 @@ class SearchActivity(GridLayout):
 		self.tickerLayout.size_hint_y = None
 		self.tickerLayout.height = Window.height * .1
 		self.stockGraph.size_hint_y = None
-		self.stockGraph.height = Window.height * .8
+		self.stockGraph.height = Window.height * .5
 		self.rangeLayout.size_hint_y = None
 		self.rangeLayout.height = Window.height * .1
 		self.dataLayout.size_hint_y = None

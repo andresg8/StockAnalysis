@@ -55,7 +55,7 @@ class RankActivity(GridLayout):
 		self.searchLayout.size_hint_y = None
 		self.searchLayout.height = Window.height * .1
 		self.dataLayout.size_hint_y = None
-		self.dataLayout.height = Window.height * 1
+		self.dataLayout.height = Window.height * .6
 
 	def setToBuy(self, *args):
 		self.sortByBuy.background_color = (0, 1, 0, 1)

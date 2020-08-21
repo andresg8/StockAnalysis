@@ -81,11 +81,32 @@ class LearnActivity(GridLayout):
 				bookLayout.add_widget(bookTitle)
 				books.append(bookLayout)
 				self.libraryLayout.add_widget(bookLayout)
+		#Who is...
+		self.whoLabel = Label(text = "Who is...", font_name = "res/Aldrich", 
+			font_hinting = "light", bold = True, italic = True, font_size = "24sp",
+			halign = "left", valign = "center", height = Window.height * .1, 
+			size_hint_y = None)
+		self.whoLabel.bind(size = self.whoLabel.setter("text_size"))
+		self.libraryLayout.add_widget(self.whoLabel)
+		bookLayout = BookLayout()
+		bookLayout.padding = [Window.width * .05, 0]
+		bookTitle = Button(text = "The Developer", font_name = "res/Aldrich", 
+					font_hinting = "light", bold = True, italic = True, font_size = "18sp",
+					halign = "left", valign = "center", height = Window.height * .1, 
+					size_hint_y = None, background_color = (1, 1, 1, 0))
+		bookTitle.bind(size = bookTitle.setter("text_size"), on_press = self.openPage)
+		bookLayout.add_widget(bookTitle)
+		books.append(bookLayout)
+		self.libraryLayout.add_widget(bookLayout)
 		self.focusLayout = self.libraryLayout
 		self.add_widget(self.focusLayout)
+		# self.bind(pos = self.manageConduit, size = self.manageConduit)
 
 	def spin(self, *args):
 		pass
+
+	def manageConduit(self, *args):
+		self.app.conduit = None
 
 	def openPage(self, itself):
 		self.newPage = BookPage(itself.text.strip(), self)
@@ -133,11 +154,14 @@ class BookPage(GridLayout):
 		self.add_widget(self.contentLayout)
 
 	def continuousHeight(self, *args):
+		self.master.app.conduit = self
 		self.contentLabel.text_size[0] = Window.width * .9
 		self.contentLabel.height = self.contentLabel.texture_size[1]
 
 	def back(self, *args):
+		self.master.app.conduit = None
 		self.master.swap(self.master.libraryLayout)
+
 
 class BookLayout(GridLayout):
 	def __init__(self):

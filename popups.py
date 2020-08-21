@@ -68,15 +68,20 @@ class SurePopup(Popup):
 		self.confirm.bind(on_press = self.confirmFunc)
 		self.reject = Button(text = "No", font_name = "res/Aldrich", font_hinting = "light", bold = True,
 			halign = "center", valign = "center", background_color = (1,0,0,.7))
-		self.reject.bind(on_press = self.rejectFunc)
+		self.reject.bind(on_press = self.back)
 		self.buttonLayout.add_widget(self.confirm)
 		self.buttonLayout.add_widget(self.reject)
 		self.contentLayout.add_widget(self.buttonLayout)
 		self.content = self.contentLayout
+		self.bind(pos = self.manageConduit, size = self.manageConduit)
+
+	def manageConduit(self, *args):
+		self.activity.app.conduit = self
 
 	def confirmFunc(self, *args):
 		self.dismiss()
 		self.seppuku()
 
-	def rejectFunc(self, *args):
+	def back(self, *args):
+		self.activity.app.conduit = None
 		self.dismiss()

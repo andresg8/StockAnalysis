@@ -40,6 +40,7 @@ class ActivitySelect(BoxLayout):
 		self.alpha.scrollView.do_scroll_y = not self.alpha.scrollView.do_scroll_y
 
 	def toSearchActivity(self, itself):
+		self.alpha.conduit = None
 		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
@@ -48,6 +49,7 @@ class ActivitySelect(BoxLayout):
 		Clock.schedule_once(self.invertScroll)
 		
 	def toTrackActivity(self, itself):
+		self.alpha.conduit = None
 		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
@@ -68,6 +70,7 @@ class ActivitySelect(BoxLayout):
 		self.loading.dismiss()
 
 	def toCompareActivity(self, itself):
+		self.alpha.conduit = None
 		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
@@ -91,6 +94,7 @@ class ActivitySelect(BoxLayout):
 		self.loading.dismiss()
 
 	def toRankActivity(self, itself):
+		self.alpha.conduit = None
 		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
@@ -111,6 +115,7 @@ class ActivitySelect(BoxLayout):
 		self.loading.dismiss()
 
 	def toLearnActivity(self, itself):
+		self.alpha.conduit = None
 		self.invertScroll()
 		self.updateSelected(itself)
 		self.alpha.scrollView.remove_widget(self.alpha.activity)
@@ -141,7 +146,8 @@ class IconButton(Button):
 	def __init__(self, layout, func, src):
 		super().__init__(text = "",background_color = (1,1,1,0))
 		with self.canvas:
-			self.image = Image(source = "res/" + src + ".png", color = (255/255,255/255,255/255,1))
+			self.image = Image(source = "res/" + src + ".png", color = (255/255,255/255,255/255,1), width = Window.width * .1,
+			 height = Window.width * .1, allow_stretch = True)
 		self.drawn = None
 		self.draw()
 		self.func = func
