@@ -286,11 +286,11 @@ class StockWidget(GridLayout):
 		self.seppukuButton = IconButton(self.seppukuHandler, "delete", (1, 69/255, 0, .7))
 		self.add_widget(self.seppukuButton)
 		stockDescriptor = stock.abbr+"\n"+stock.name
-		if len(stockDescriptor) >= 25:
-			stockDescriptor = stockDescriptor[:22] + "..."
+		if len(stockDescriptor) >= 30:
+			stockDescriptor = stockDescriptor[:27] + "..."
 		self.abbrLabel = Label(text = stockDescriptor, font_name = "res/Aldrich", font_hinting = "light", 
 								font_size = fs, height = Window.height * .1, size_hint_y = None,
-								width = Window.width * .18, size_hint_x = None, halign = "center")
+								width = Window.width * .18, size_hint_x = None, halign = "center", valign = "center")
 		self.abbrLabel.text_size = [Window.width * .18, Window.height * .1]
 		self.add_widget(self.abbrLabel)
 		self.detailLayout = GridLayout(cols = 1, height = Window.height * .1, size_hint_y = None)

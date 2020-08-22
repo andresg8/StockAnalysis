@@ -21,7 +21,8 @@ class RankActivity(GridLayout):
 		self.sortby = 1
 		self.titleText = "Signal Rankings"
 		self.titleLabel = Label(text = self.titleText, font_name = "res/Aldrich", font_hinting = "light",
-								height = Window.height * .1, size_hint_y = None, halign = "left", font_size = "24sp")
+								height = Window.height * .1, size_hint_y = None, halign = "center", font_size = "24sp")
+		self.titleLabel.text_size[0] = Window.width
 		self.add_widget(self.titleLabel)
 		self.sortLayout = BoxLayout(orientation = 'horizontal', size_hint_y = None, height = Window.height * .1)
 		self.sortLabel = Label(text = "Sort by:", font_name = "res/Aldrich", font_hinting = "light",
@@ -210,8 +211,8 @@ class SearchBarCompare(TextInput):
 			if self.text:
 				self.autofill(self.text)
 			self.alpha.swap(self.searchRecLayout)
-		else:
-			self.alpha.swap()
+		# else:
+		# 	self.alpha.swap()
 
 	def autofill(self, *args):
 		if self.searchRecLayout and args[-1]:
